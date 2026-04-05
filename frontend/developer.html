@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>开发者仪表盘 - 开源插件市场</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <a href="/" class="logo">开源插件市场</a>
+        <nav class="nav-links">
+          <a href="store.html" class="nav-link">浏览商店</a>
+          <div class="user-container"></div>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Layout with Sidebar -->
+    <div class="layout-with-sidebar">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">开发者中心</div>
+          <ul class="sidebar-nav">
+            <li class="sidebar-nav-item">
+              <a href="developer.html" class="sidebar-nav-link active">
+                <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                </svg>
+                仪表盘
+              </a>
+            </li>
+            <li class="sidebar-nav-item">
+              <a href="my-plugins.html" class="sidebar-nav-link">
+                <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                </svg>
+                我的插件
+              </a>
+            </li>
+            <li class="sidebar-nav-item">
+              <a href="submit-plugin.html" class="sidebar-nav-link">
+                <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                提交插件
+              </a>
+            </li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <h1 class="page-title">开发者仪表盘</h1>
+          <p class="page-description" id="welcome-text">欢迎回来！管理您的插件提交。</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid" id="stats-container">
+          <div class="stat-card">
+            <div class="stat-info">
+              <p class="stat-label">全部插件</p>
+              <p class="stat-value" id="stat-total">0</p>
+            </div>
+            <div class="stat-icon info">
+              <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <p class="stat-label">待审核</p>
+              <p class="stat-value" id="stat-pending">0</p>
+            </div>
+            <div class="stat-icon warning">
+              <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <p class="stat-label">已通过</p>
+              <p class="stat-value" id="stat-approved">0</p>
+            </div>
+            <div class="stat-icon success">
+              <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <p class="stat-label">已驳回</p>
+              <p class="stat-value" id="stat-rejected">0</p>
+            </div>
+            <div class="stat-icon error">
+              <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card" style="margin-top: 2rem;">
+          <div class="card-body">
+            <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">快速操作</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+              <a href="submit-plugin.html" class="btn btn-primary">
+                <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                提交新插件
+              </a>
+              <a href="my-plugins.html" class="btn btn-secondary">
+                <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+                查看我的插件
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card" style="margin-top: 2rem;">
+          <div class="card-body">
+            <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">最近活动</h2>
+            <div id="activity-container" class="activity-list">
+              <!-- Activities will be loaded here -->
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <p>开源插件市场 - 基于 GitHub OAuth 的元数据插件平台</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // 检查登录状态
+    if (!auth.isAuthenticated()) {
+      window.location.href = '/login.html?returnUrl=' + encodeURIComponent(window.location.pathname);
+    }
+
+    // 更新欢迎文本
+    const user = auth.getUser();
+    if (user) {
+      document.getElementById('welcome-text').textContent = `欢迎回来，${user.username}！管理您的插件提交。`;
+    }
+
+    // 加载统计数据
+    async function loadStats() {
+      try {
+        const data = await api.get('/developer/plugins');
+        const plugins = data.items || [];
+
+        document.getElementById('stat-total').textContent = plugins.length;
+        document.getElementById('stat-pending').textContent = plugins.filter(p => p.status === 'pending').length;
+        document.getElementById('stat-approved').textContent = plugins.filter(p => p.status === 'approved').length;
+        document.getElementById('stat-rejected').textContent = plugins.filter(p => p.status === 'rejected').length;
+
+        // 加载活动列表
+        const container = document.getElementById('activity-container');
+        if (plugins.length === 0) {
+          container.innerHTML = '<p style="text-align: center; color: var(--color-text-secondary); padding: 2rem;">暂无活动记录</p>';
+          return;
+        }
+
+        container.innerHTML = plugins.slice(0, 5).map(plugin => {
+          const statusConfig = {
+            'pending': { icon: 'clock', color: 'warning', text: '等待审核' },
+            'approved': { icon: 'check', color: 'success', text: '已通过审核' },
+            'rejected': { icon: 'x', color: 'error', text: '已被驳回' }
+          };
+          const config = statusConfig[plugin.status] || statusConfig.pending;
+          
+          return `
+            <div class="activity-item">
+              <div class="activity-icon ${config.color}">
+                ${getIcon(config.icon)}
+              </div>
+              <div class="activity-content">
+                <p class="activity-title">插件 "${plugin.name}" ${config.text}</p>
+                <p class="activity-description">${plugin.status === 'pending' ? '提交于' : '审核于'} ${utils.formatDate(plugin.updatedAt)}</p>
+              </div>
+              <span class="badge badge-${config.color}">${getStatusLabel(plugin.status)}</span>
+            </div>
+          `;
+        }).join('');
+      } catch (error) {
+        console.error('Failed to load stats:', error);
+      }
+    }
+
+    function getIcon(name) {
+      const icons = {
+        'clock': '<svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+        'check': '<svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>',
+        'x': '<svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>'
+      };
+      return icons[name] || icons.clock;
+    }
+
+    function getStatusLabel(status) {
+      const labels = {
+        'pending': '待审核',
+        'approved': '已通过',
+        'rejected': '已驳回',
+        'removed': '已下架'
+      };
+      return labels[status] || status;
+    }
+
+    loadStats();
+  </script>
+</body>
+</html>

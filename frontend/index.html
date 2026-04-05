@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>开源插件市场</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <a href="/" class="logo">开源插件市场</a>
+        <nav class="nav-links">
+          <a href="store.html" class="nav-link">浏览商店</a>
+          <div class="user-container">
+            <a href="login.html" class="btn btn-primary btn-sm">登录</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <main class="page-content" style="background: linear-gradient(to bottom, #f9fafb, #ffffff);">
+      <div class="container" style="padding: 5rem 1.5rem;">
+        <div style="text-align: center; max-width: 768px; margin: 0 auto;">
+          <h1 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1.5rem;">
+            发现优质开源插件
+          </h1>
+          <p style="font-size: 1.125rem; color: var(--color-text-secondary); margin-bottom: 2rem; line-height: 1.7;">
+            基于 GitHub 的插件市场，严格审核，安全可靠。<br>
+            为开发者提供高质量的插件发现平台。
+          </p>
+          <div style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
+            <a href="store.html" class="btn btn-primary btn-lg">浏览插件</a>
+            <a href="login.html" class="btn btn-outline btn-lg">发布插件</a>
+          </div>
+        </div>
+
+        <!-- Features -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 5rem;">
+          <!-- Feature 1 -->
+          <div class="card" style="padding: 1.5rem;">
+            <div style="width: 48px; height: 48px; background: #dbeafe; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+              <svg style="width: 24px; height: 24px; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <h3 style="font-weight: 600; margin-bottom: 0.5rem;">审核机制</h3>
+            <p style="font-size: 0.875rem; color: var(--color-text-secondary);">
+              所有插件经过人工审核，确保质量和安全性
+            </p>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="card" style="padding: 1.5rem;">
+            <div style="width: 48px; height: 48px; background: #d1fae5; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+              <svg style="width: 24px; height: 24px; color: #059669;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+              </svg>
+            </div>
+            <h3 style="font-weight: 600; margin-bottom: 0.5rem;">GitHub 集成</h3>
+            <p style="font-size: 0.875rem; color: var(--color-text-secondary);">
+              直接使用 GitHub 仓库，代码来源透明可追溯
+            </p>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="card" style="padding: 1.5rem;">
+            <div style="width: 48px; height: 48px; background: #e9d5ff; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+              <svg style="width: 24px; height: 24px; color: #7c3aed;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              </svg>
+            </div>
+            <h3 style="font-weight: 600; margin-bottom: 0.5rem;">权限管理</h3>
+            <p style="font-size: 0.875rem; color: var(--color-text-secondary);">
+              严格的角色分离，开发者、审批者、超管各司其职
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <p>开源插件市场 - 基于 GitHub OAuth 的元数据插件平台</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
