@@ -23,36 +23,53 @@
 
 ## ✨ 功能特性
 
-- **🔐 用户认证** - 基于 GitHub OAuth 的登录系统，JWT 身份验证
-- **📦 插件管理** - 完整的插件生命周期管理（提交、审核、发布、下架）
-- **✅ 审批工作流** - 审批者对插件进行审核操作
-- **👨‍💼 管理后台** - 管理员可进行用户、插件、分类、审批者等管理
-- **📝 审计日志** - 记录关键操作便于追踪
-- **📱 响应式设计** - 支持桌面和移动设备访问
+- **🔐 用户认证** - 基于 GitHub OAuth 的登录系统，JWT 身份验证，支持 Access Token 和 Refresh Token
+- **📦 插件管理** - 完整的插件生命周期管理（提交、审核、发布、下架、删除）
+- **🏷️ 分类管理** - 插件分类浏览和管理，支持自定义分类
+- **✅ 审批工作流** - 多级审批流程，支持批准、驳回、需要修改等操作
+- **👨‍💼 管理后台** - 管理员可进行用户、插件、分类、审批者等全方位管理
+- **📝 审计日志** - 记录关键操作便于追踪和合规
+- **📊 数据统计** - 平台数据统计和可视化展示
+- **🌐 响应式设计** - 支持桌面和移动设备访问
+- **🔍 搜索筛选** - 插件搜索、分类筛选、排序功能
 
 ## 🏗️ 项目架构
 
 ```
 .
-├── backend_py/          # Python + Flask 后端 API
-│   ├── app/             # 应用主目录
-│   │   ├── models/      # 数据库模型
-│   │   ├── routes/      # API 路由
-│   │   ├── services/    # 业务逻辑
-│   │   └── utils/       # 工具函数
-│   ├── config/          # 配置文件
-│   ├── requirements.txt # Python 依赖
-│   ├── API.md           # 详细 API 文档
-│   └── README.md        # 后端说明文档
+├── backend_py/               # Python + Flask 后端 API
+│   ├── app/                  # 应用主目录
+│   │   ├── models/           # 数据库模型 (User, Plugin, Category, Review, AuditLog)
+│   │   ├── routes/           # API 路由 (auth, plugins, developer, reviewer, admin, user)
+│   │   ├── services/         # 业务逻辑层
+│   │   └── utils/            # 工具函数 (decorators)
+│   ├── config/               # 配置文件
+│   ├── migrations/           # 数据库迁移文件
+│   ├── requirements.txt      # Python 依赖
+│   ├── .env.example          # 环境变量示例
+│   ├── wsgi.py               # WSGI 入口
+│   ├── API.md                # 详细 API 文档
+│   ├── FRONTEND_INTEGRATION.md # 前端集成指南
+│   └── README.md             # 后端说明文档
 │
-└── frontend/            # 纯前端 HTML/CSS/JS
-    ├── index.html       # 首页/插件列表
-    ├── login.html       # 登录页面
-    ├── store.html       # 插件详情
-    ├── developer.html   # 开发者中心
-    ├── admin.html       # 管理后台
-    ├── app.js           # 前端逻辑
-    └── styles.css       # 样式文件
+└── frontend/                 # 纯前端 HTML/CSS/JS
+    ├── index.html            # 首页/插件列表
+    ├── store.html            # 插件商店/详情
+    ├── login.html            # 登录页面
+    ├── callback.html         # GitHub OAuth 回调
+    ├── developer.html        # 开发者中心
+    ├── submit-plugin.html    # 提交插件
+    ├── my-plugins.html       # 我的插件管理
+    ├── admin.html            # 管理后台首页
+    ├── admin-users.html      # 用户管理
+    ├── admin-plugins.html    # 插件管理
+    ├── admin-categories.html # 分类管理
+    ├── admin-reviewers.html  # 审批者管理
+    ├── admin-stats.html      # 统计数据
+    ├── review-plugins.html   # 插件审批
+    ├── plugin-detail.html    # 插件详情页
+    ├── app.js                # 前端主逻辑
+    └── styles.css            # 样式文件
 ```
 
 ## 🛠️ 技术栈
@@ -63,7 +80,9 @@
 | [Flask](https://flask.palletsprojects.com/) | Python Web 框架 |
 | [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/) | ORM 数据库操作 |
 | [Flask-JWT-Extended](https://flask-jwt-extended.readthedocs.io/) | JWT 认证 |
-| [MySQL](https://www.mysql.com/) | 数据库 |
+| [Flask-Migrate](https://flask-migrate.readthedocs.io/) | 数据库迁移 |
+| [Flask-CORS](https://flask-cors.readthedocs.io/) | 跨域支持 |
+| [PyMySQL](https://pypi.org/project/PyMySQL/) | MySQL 驱动 |
 | [GitHub OAuth](https://docs.github.com/en/developers/apps) | 第三方登录 |
 
 ### 前端
@@ -184,11 +203,12 @@ LOG_LEVEL=INFO
 
 ## 📚 文档
 
-| 文档 | 说明 |
-|------|------|
-| [后端 API 文档](./backend_py/API.md) | 详细的 RESTful API 接口文档 |
-| [前端集成指南](./backend_py/FRONTEND_INTEGRATION.md) | 前端与后端的集成说明 |
-| [后端说明文档](./backend_py/README.md) | 后端的详细说明 |
+| 文档 | 路径 | 说明 |
+|------|------|------|
+| [后端 API 文档](./backend_py/API.md) | `backend_py/API.md` | 详细的 RESTful API 接口文档 |
+| [前端集成指南](./backend_py/FRONTEND_INTEGRATION.md) | `backend_py/FRONTEND_INTEGRATION.md` | 前端与后端的集成说明 |
+| [后端说明文档](./backend_py/README.md) | `backend_py/README.md` | 后端详细说明和部署指南 |
+| [环境变量示例](./backend_py/.env.example) | `backend_py/.env.example` | 环境变量配置模板 |
 
 ## 👥 用户角色
 
@@ -200,24 +220,34 @@ LOG_LEVEL=INFO
 
 ## 🌐 API 概览
 
-| 模块 | 基础路径 | 说明 |
-|------|----------|------|
-| 认证 | `/api/auth/*` | GitHub OAuth、Token 刷新 |
-| 公开端 | `/api/plugins`, `/api/categories` | 插件列表、详情、分类 |
-| 开发者端 | `/api/developer/*` | 提交插件、我的插件 |
-| 审批者端 | `/api/reviewer/*` | 审批队列、审批操作 |
-| 管理端 | `/api/admin/*` | 用户、插件、分类管理 |
-| 用户端 | `/api/user/*` | 个人信息 |
+| 模块 | 基础路径 | 说明 | 权限 |
+|------|----------|------|------|
+| 认证 | `/api/auth/*` | GitHub OAuth、Token 刷新、当前用户 | 公开 |
+| 插件公开 | `/api/plugins/*` | 插件列表、详情、搜索 | 公开 |
+| 分类公开 | `/api/categories/*` | 分类列表、详情 | 公开 |
+| 开发者 | `/api/developer/*` | 提交插件、我的插件、更新插件 | 登录用户 |
+| 审批者 | `/api/reviewer/*` | 审批队列、审批操作、审批历史 | Reviewer+ |
+| 管理端 | `/api/admin/*` | 用户/插件/分类/审批者管理、审计日志、统计 | Admin |
+| 用户端 | `/api/user/*` | 个人信息、修改信息 | 登录用户 |
 
 ## 📸 页面预览
 
-| 页面 | 功能描述 |
-|------|----------|
-| **首页** | 插件浏览和搜索 |
-| **登录页** | GitHub OAuth 登录 |
-| **插件详情** | 查看插件信息和安装 |
-| **开发者中心** | 提交和管理插件 |
-| **管理后台** | 系统管理和审批 |
+| 页面 | 路径 | 功能描述 |
+|------|------|----------|
+| **首页** | `index.html` | 插件浏览、搜索、分类筛选 |
+| **插件商店** | `store.html` | 插件展示和推荐 |
+| **插件详情** | `plugin-detail.html` | 查看插件详细信息、版本、README |
+| **登录页** | `login.html` | GitHub OAuth 登录入口 |
+| **开发者中心** | `developer.html` | 开发者仪表盘和统计 |
+| **提交插件** | `submit-plugin.html` | 新插件提交表单 |
+| **我的插件** | `my-plugins.html` | 管理自己提交的插件 |
+| **插件审批** | `review-plugins.html` | 审批者审核插件 (Reviewer+) |
+| **管理后台** | `admin.html` | 管理员仪表盘 (Admin) |
+| **用户管理** | `admin-users.html` | 管理系统用户 (Admin) |
+| **插件管理** | `admin-plugins.html` | 管理所有插件 (Admin) |
+| **分类管理** | `admin-categories.html` | 管理插件分类 (Admin) |
+| **审批者管理** | `admin-reviewers.html` | 设置审批者 (Admin) |
+| **统计报表** | `admin-stats.html` | 查看平台统计数据 (Admin) |
 
 ## 🔒 安全说明
 
