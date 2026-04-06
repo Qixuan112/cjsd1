@@ -59,6 +59,14 @@
               </a>
             </li>
             <li class="sidebar-nav-item">
+              <a href="admin-categories.html" class="sidebar-nav-link">
+                <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                </svg>
+                分类管理
+              </a>
+            </li>
+            <li class="sidebar-nav-item">
               <a href="admin-stats.html" class="sidebar-nav-link">
                 <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
@@ -98,12 +106,26 @@
           </div>
         </div>
 
+        <!-- Search and Filter -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <div class="card-body">
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
+              <div class="form-group" style="flex: 1; min-width: 200px; margin-bottom: 0;">
+                <label class="form-label">搜索插件</label>
+                <input type="text" class="form-input" id="search-input" placeholder="搜索插件名称..." onkeyup="handleSearch(event)">
+              </div>
+              <button class="btn btn-secondary" onclick="resetSearch()">重置</button>
+            </div>
+          </div>
+        </div>
+
         <!-- Filter Tabs -->
         <div class="tabs" style="margin-bottom: 1.5rem;">
           <button class="tab-btn active" onclick="filterPlugins('all')" id="tab-all">全部</button>
           <button class="tab-btn" onclick="filterPlugins('pending')" id="tab-pending">待审核</button>
           <button class="tab-btn" onclick="filterPlugins('approved')" id="tab-approved">已通过</button>
           <button class="tab-btn" onclick="filterPlugins('rejected')" id="tab-rejected">已驳回</button>
+          <button class="tab-btn" onclick="filterPlugins('removed')" id="tab-removed">已下架</button>
         </div>
 
         <!-- Plugin List -->
@@ -114,6 +136,10 @@
           <div class="card-body">
             <div id="plugins-container">
               <!-- Plugins will be loaded here -->
+            </div>
+            <!-- Pagination -->
+            <div id="pagination-container" style="margin-top: 1.5rem; display: none;">
+              <!-- Pagination will be loaded here -->
             </div>
           </div>
         </div>
@@ -149,103 +175,200 @@
       loadPlugins();
     })();
 
+    // 当前状态
     let allPlugins = [];
     let currentFilter = 'all';
+    let currentSearch = '';
+    let currentPage = 1;
+    const pageSize = 20;
+
+    // 处理搜索
+    function handleSearch(event) {
+      if (event.key === 'Enter') {
+        currentSearch = document.getElementById('search-input').value.trim();
+        currentPage = 1;
+        loadPlugins();
+      }
+    }
+
+    // 重置搜索
+    function resetSearch() {
+      document.getElementById('search-input').value = '';
+      currentSearch = '';
+      currentPage = 1;
+      loadPlugins();
+    }
 
     // 加载插件列表
     async function loadPlugins() {
       const container = document.getElementById('plugins-container');
-      
+      const paginationContainer = document.getElementById('pagination-container');
+
       try {
         utils.showLoading(container, '加载中...');
-        
-        const data = await api.get('/admin/plugins');
-        allPlugins = data.items || [];
 
-        // 更新统计
-        document.getElementById('total-count').textContent = allPlugins.length;
-        document.getElementById('pending-count').textContent = allPlugins.filter(p => p.status === 'pending').length;
-        document.getElementById('approved-count').textContent = allPlugins.filter(p => p.status === 'approved').length;
-        document.getElementById('rejected-count').textContent = allPlugins.filter(p => p.status === 'rejected').length;
+        // 构建查询参数
+        let url = `/admin/plugins?page=${currentPage}&limit=${pageSize}`;
+        if (currentSearch) {
+          url += `&search=${encodeURIComponent(currentSearch)}`;
+        }
+        if (currentFilter !== 'all') {
+          url += `&status=${encodeURIComponent(currentFilter)}`;
+        }
 
-        renderPlugins();
+        const data = await api.get(url);
+        const plugins = data.items || [];
+        const total = data.total || 0;
+
+        // 更新统计（只在第一次加载时更新）
+        if (currentPage === 1 && !currentSearch) {
+          updateStats(plugins);
+        }
+
+        if (plugins.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+              </svg>
+              <h3 class="empty-title">暂无插件</h3>
+              <p class="empty-description">${currentSearch || currentFilter !== 'all' ? '没有符合筛选条件的插件' : '该状态下没有插件'}</p>
+            </div>
+          `;
+          paginationContainer.style.display = 'none';
+          return;
+        }
+
+        container.innerHTML = `
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>插件名称</th>
+                  <th>作者</th>
+                  <th>分类</th>
+                  <th>状态</th>
+                  <th>提交时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${plugins.map(plugin => `
+                  <tr>
+                    <td>
+                      <div class="flex items-center gap-2">
+                        <img src="${plugin.github_data?.owner?.avatar_url || 'https://avatars.githubusercontent.com/u/0?v=4'}" alt="${plugin.author}" class="w-6 h-6 rounded-full">
+                        <span>${plugin.name}</span>
+                      </div>
+                    </td>
+                    <td>${plugin.author}</td>
+                    <td>${plugin.category || '-'}</td>
+                    <td>
+                      <span class="badge badge-${getStatusClass(plugin.status)}">${getStatusLabel(plugin.status)}</span>
+                    </td>
+                    <td>${utils.formatDate(plugin.created_at)}</td>
+                    <td>
+                      <a href="${plugin.repo_url}" target="_blank" class="btn btn-ghost btn-sm">查看仓库</a>
+                      ${plugin.status === 'approved' ? `
+                        <button class="btn btn-error btn-sm" onclick="banPlugin(${plugin.id}, '${plugin.name}')">下架</button>
+                      ` : ''}
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+
+        // 渲染分页
+        renderPagination(total, pageSize, currentPage);
       } catch (error) {
         utils.showError(container, '加载失败，请重试', 'loadPlugins()');
       }
     }
 
+    // 更新统计信息
+    function updateStats(plugins) {
+      // 获取所有插件统计（不分页）
+      api.get('/admin/plugins?limit=1000').then(data => {
+        const allPlugins = data.items || [];
+        document.getElementById('total-count').textContent = allPlugins.length;
+        document.getElementById('pending-count').textContent = allPlugins.filter(p => p.status === 'pending').length;
+        document.getElementById('approved-count').textContent = allPlugins.filter(p => p.status === 'approved').length;
+        document.getElementById('rejected-count').textContent = allPlugins.filter(p => p.status === 'rejected').length;
+      }).catch(() => {});
+    }
+
     // 过滤插件
     function filterPlugins(status) {
       currentFilter = status;
-      
+
       // 更新标签状态
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.getElementById('tab-' + status).classList.add('active');
-      
-      renderPlugins();
+
+      currentPage = 1;
+      loadPlugins();
     }
 
-    // 渲染插件列表
-    function renderPlugins() {
-      const container = document.getElementById('plugins-container');
-      
-      const plugins = currentFilter === 'all' 
-        ? allPlugins 
-        : allPlugins.filter(p => p.status === currentFilter);
+    // 渲染分页
+    function renderPagination(total, pageSize, currentPage) {
+      const paginationContainer = document.getElementById('pagination-container');
+      const totalPages = Math.ceil(total / pageSize);
 
-      if (plugins.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-            </svg>
-            <h3 class="empty-title">暂无插件</h3>
-            <p class="empty-description">该状态下没有插件</p>
-          </div>
-        `;
+      if (totalPages <= 1) {
+        paginationContainer.style.display = 'none';
         return;
       }
 
-      container.innerHTML = `
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>插件名称</th>
-                <th>作者</th>
-                <th>分类</th>
-                <th>状态</th>
-                <th>提交时间</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${plugins.map(plugin => `
-                <tr>
-                  <td>
-                    <div class="flex items-center gap-2">
-                      <img src="${plugin.github_data?.owner?.avatar_url || 'https://avatars.githubusercontent.com/u/0?v=4'}" alt="${plugin.author}" class="w-6 h-6 rounded-full">
-                      <span>${plugin.name}</span>
-                    </div>
-                  </td>
-                  <td>${plugin.author}</td>
-                  <td>${plugin.category || '-'}</td>
-                  <td>
-                    <span class="badge badge-${getStatusClass(plugin.status)}">${getStatusLabel(plugin.status)}</span>
-                  </td>
-                  <td>${utils.formatDate(plugin.created_at)}</td>
-                  <td>
-                    <a href="${plugin.repo_url}" target="_blank" class="btn btn-ghost btn-sm">查看仓库</a>
-                    ${plugin.status === 'approved' ? `
-                      <button class="btn btn-error btn-sm" onclick="banPlugin(${plugin.id}, '${plugin.name}')">下架</button>
-                    ` : ''}
-                  </td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      `;
+      let html = `<div style="display: flex; justify-content: space-between; align-items: center;">`;
+      html += `<span style="color: var(--text-secondary); font-size: 0.875rem;">共 ${total} 条记录，第 ${currentPage}/${totalPages} 页</span>`;
+      html += `<div style="display: flex; gap: 0.5rem;">`;
+
+      // 上一页
+      html += `<button class="btn btn-ghost btn-sm" ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})">上一页</button>`;
+
+      // 页码
+      const maxButtons = 5;
+      let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+      let endPage = Math.min(totalPages, startPage + maxButtons - 1);
+
+      if (endPage - startPage < maxButtons - 1) {
+        startPage = Math.max(1, endPage - maxButtons + 1);
+      }
+
+      if (startPage > 1) {
+        html += `<button class="btn btn-ghost btn-sm" onclick="goToPage(1)">1</button>`;
+        if (startPage > 2) {
+          html += `<span style="padding: 0.5rem;">...</span>`;
+        }
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        const activeClass = i === currentPage ? 'btn-primary' : 'btn-ghost';
+        html += `<button class="btn ${activeClass} btn-sm" onclick="goToPage(${i})">${i}</button>`;
+      }
+
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+          html += `<span style="padding: 0.5rem;">...</span>`;
+        }
+        html += `<button class="btn btn-ghost btn-sm" onclick="goToPage(${totalPages})">${totalPages}</button>`;
+      }
+
+      // 下一页
+      html += `<button class="btn btn-ghost btn-sm" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})">下一页</button>`;
+
+      html += `</div></div>`;
+      paginationContainer.innerHTML = html;
+      paginationContainer.style.display = 'block';
+    }
+
+    // 跳转到指定页
+    function goToPage(page) {
+      currentPage = page;
+      loadPlugins();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function getStatusClass(status) {

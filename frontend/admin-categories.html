@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>分类管理 - 开源插件市场</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <a href="/" class="logo">开源插件市场</a>
+        <nav class="nav-links">
+          <a href="store.html" class="nav-link">浏览商店</a>
+          <div class="user-container"></div>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Layout with Sidebar -->
+    <div class="layout-with-sidebar">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">管理中心</div>
+          <ul class="sidebar-nav">
+            <li class="sidebar-nav-item">
+              <a href="admin.html" class="sidebar-nav-link">
+                <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                </svg>
+                仪表盘
+              </a>
+            </li>
+            <li class="sidebar-nav-item">
+              <a href="admin-users.html" class="sidebar-nav-link">
+                <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+                用户管理
+              </a>
+            </li>
+            <li class="sidebar-nav-item">
+              <a href="admin-plugins.html" class="sidebar-nav-link">
+                <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                </svg>
+                插件管理
+              </a>
+            </li>
+            <li class="sidebar-nav-item">
+              <a href="admin-reviewers.html" class="sidebar-nav-link">
+                <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                审批者管理
+              </a>
+            </li>
+            <li class="sidebar-nav-item">
+              <a href="admin-categories.html" class="sidebar-nav-link active">
+                <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                </svg>
+                分类管理
+              </a>
+            </li>
+            <li class="sidebar-nav-item">
+              <a href="admin-stats.html" class="sidebar-nav-link">
+                <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+                数据统计
+              </a>
+            </li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <h1 class="page-title">分类管理</h1>
+          <p class="page-description">管理插件分类</p>
+        </div>
+
+        <!-- Category List -->
+        <div class="card">
+          <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 class="card-title">分类列表</h2>
+            <button class="btn btn-primary" onclick="openCreateModal()">
+              <svg style="width: 16px; height: 16px; margin-right: 4px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+              </svg>
+              新建分类
+            </button>
+          </div>
+          <div class="card-body">
+            <div id="categories-container">
+              <!-- Categories will be loaded here -->
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <p>开源插件市场 - 基于 GitHub OAuth 的元数据插件平台</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Create Category Modal -->
+  <div id="create-modal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title">新建分类</h3>
+        <button class="modal-close" onclick="closeCreateModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">分类名称 <span class="text-error">*</span></label>
+          <input type="text" class="form-input" id="create-name" placeholder="请输入分类名称">
+        </div>
+        <div class="form-group">
+          <label class="form-label">分类描述</label>
+          <textarea class="form-textarea" id="create-description" rows="3" placeholder="请输入分类描述（可选）"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeCreateModal()">取消</button>
+        <button class="btn btn-primary" onclick="createCategory()">创建</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Category Modal -->
+  <div id="edit-modal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title">编辑分类</h3>
+        <button class="modal-close" onclick="closeEditModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-id">
+        <div class="form-group">
+          <label class="form-label">分类名称 <span class="text-error">*</span></label>
+          <input type="text" class="form-input" id="edit-name" placeholder="请输入分类名称">
+        </div>
+        <div class="form-group">
+          <label class="form-label">分类描述</label>
+          <textarea class="form-textarea" id="edit-description" rows="3" placeholder="请输入分类描述（可选）"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeEditModal()">取消</button>
+        <button class="btn btn-primary" onclick="updateCategory()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // 检查登录状态和管理员权限
+    (async function checkAuth() {
+      if (!auth.isAuthenticated()) {
+        window.location.href = '/login.html?returnUrl=' + encodeURIComponent(window.location.pathname);
+        return;
+      }
+      
+      const user = auth.getUser();
+      if (!user || user.role !== 'admin') {
+        alert('您没有权限访问此页面');
+        window.location.href = '/';
+        return;
+      }
+      
+      loadCategories();
+    })();
+
+    // 加载分类列表
+    async function loadCategories() {
+      const container = document.getElementById('categories-container');
+      
+      try {
+        utils.showLoading(container, '加载中...');
+        
+        const categories = await api.get('/admin/categories');
+
+        if (categories.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+              </svg>
+              <h3 class="empty-title">暂无分类</h3>
+              <p class="empty-description">还没有创建任何分类</p>
+              <button class="btn btn-primary" onclick="openCreateModal()">创建分类</button>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = `
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>分类名称</th>
+                  <th>描述</th>
+                  <th>插件数量</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${categories.map(category => `
+                  <tr>
+                    <td>${category.id}</td>
+                    <td><strong>${category.name}</strong></td>
+                    <td>${category.description || '-'}</td>
+                    <td>
+                      <span class="badge badge-info">${category.plugin_count || 0}</span>
+                    </td>
+                    <td>
+                      <div class="flex gap-1">
+                        <button class="btn btn-ghost btn-sm" onclick="openEditModal(${category.id}, '${category.name}', '${category.description || ''}')">编辑</button>
+                        <button class="btn btn-error btn-sm" onclick="deleteCategory(${category.id}, '${category.name}')">删除</button>
+                      </div>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } catch (error) {
+        utils.showError(container, '加载失败，请重试', 'loadCategories()');
+      }
+    }
+
+    // 打开创建模态框
+    function openCreateModal() {
+      document.getElementById('create-name').value = '';
+      document.getElementById('create-description').value = '';
+      document.getElementById('create-modal').style.display = 'flex';
+    }
+
+    // 关闭创建模态框
+    function closeCreateModal() {
+      document.getElementById('create-modal').style.display = 'none';
+    }
+
+    // 创建分类
+    async function createCategory() {
+      const name = document.getElementById('create-name').value.trim();
+      const description = document.getElementById('create-description').value.trim();
+
+      if (!name) {
+        alert('请输入分类名称');
+        return;
+      }
+
+      try {
+        await api.post('/admin/categories', { name, description });
+        closeCreateModal();
+        alert('分类创建成功！');
+        loadCategories();
+      } catch (error) {
+        alert('创建失败：' + error.message);
+      }
+    }
+
+    // 打开编辑模态框
+    function openEditModal(id, name, description) {
+      document.getElementById('edit-id').value = id;
+      document.getElementById('edit-name').value = name;
+      document.getElementById('edit-description').value = description;
+      document.getElementById('edit-modal').style.display = 'flex';
+    }
+
+    // 关闭编辑模态框
+    function closeEditModal() {
+      document.getElementById('edit-modal').style.display = 'none';
+    }
+
+    // 更新分类
+    async function updateCategory() {
+      const id = document.getElementById('edit-id').value;
+      const name = document.getElementById('edit-name').value.trim();
+      const description = document.getElementById('edit-description').value.trim();
+
+      if (!name) {
+        alert('请输入分类名称');
+        return;
+      }
+
+      try {
+        await api.put(`/admin/categories/${id}`, { name, description });
+        closeEditModal();
+        alert('分类更新成功！');
+        loadCategories();
+      } catch (error) {
+        alert('更新失败：' + error.message);
+      }
+    }
+
+    // 删除分类
+    async function deleteCategory(id, name) {
+      if (!confirm(`确定要删除分类 "${name}" 吗？\n注意：如果该分类下有关联的插件，可能无法删除。`)) {
+        return;
+      }
+
+      try {
+        await api.delete(`/admin/categories/${id}`);
+        alert('分类删除成功！');
+        loadCategories();
+      } catch (error) {
+        if (error.message && error.message.includes('400')) {
+          alert('该分类下有关联的插件，无法删除。请先移除相关插件后再试。');
+        } else {
+          alert('删除失败：' + error.message);
+        }
+      }
+    }
+
+    // 点击模态框外部关闭
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('modal')) {
+        e.target.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
