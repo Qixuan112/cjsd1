@@ -23,6 +23,9 @@ class AuditAction(enum.Enum):
     revoke_role = 'revoke_role'           # 撤销角色
     health_check = 'health_check'         # 健康检查
     auto_promote_admin = 'auto_promote_admin'  # 自动提升为管理员
+    enable = 'enable'                     # 启用
+    disable = 'disable'                   # 禁用
+    delete = 'delete'                     # 删除
 
 
 class ResourceType(enum.Enum):

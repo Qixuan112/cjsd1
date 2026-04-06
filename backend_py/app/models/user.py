@@ -6,7 +6,7 @@ User 模型模块
 
 import enum
 from datetime import datetime, timezone
-from sqlalchemy import Integer, String, DateTime, Enum, Index
+from sqlalchemy import Integer, String, DateTime, Enum, Index, Boolean
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from app import db
@@ -36,6 +36,11 @@ class User(db.Model):
     role: Mapped[UserRole] = mapped_column(
         Enum(UserRole, name='user_role_enum', native_enum=False),
         default=UserRole.user,
+        nullable=False
+    )
+    is_active: Mapped[bool] = mapped_column(
+        Boolean,
+        default=True,
         nullable=False
     )
     created_at: Mapped[datetime] = mapped_column(
@@ -82,6 +87,7 @@ class User(db.Model):
             'email': self.email,
             'avatar': self.avatar,
             'role': self.role.value,
+            'is_active': self.is_active,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
         }

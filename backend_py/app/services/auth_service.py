@@ -142,7 +142,7 @@ def create_or_update_user(github_user):
             username=username,
             email=email,
             avatar=avatar,
-            role=UserRole.user
+            role=UserRole.developer
         )
         db.session.add(user)
     

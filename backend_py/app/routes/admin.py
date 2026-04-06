@@ -217,6 +217,83 @@ def update_user_role_endpoint(user_id: int):
     return jsonify(result), 200
 
 
+@bp.route('/users/<int:user_id>/status', methods=['PUT'])
+@jwt_required_custom
+@require_admin
+def update_user_status_endpoint(user_id: int):
+    """
+    更新用户状态接口（禁用/启用）
+
+    Path Parameters:
+        - user_id: 用户ID
+
+    Request Body:
+        {
+            "is_active": false
+        }
+
+    Response:
+        200 OK
+        {
+            "message": "User status updated successfully",
+            "user": {...}
+        }
+    """
+    data = request.get_json() or {}
+    is_active = data.get('is_active')
+
+    if is_active is None:
+        return jsonify({'error': 'is_active is required'}), 400
+
+    from app.services.admin_service import update_user_status
+    admin = g.current_user
+
+    success, result = update_user_status(
+        user_id=user_id,
+        is_active=is_active,
+        admin_id=admin.id
+    )
+
+    if not success:
+        if 'not found' in result.get('error', '').lower():
+            return jsonify(result), 404
+        return jsonify(result), 400
+
+    return jsonify(result), 200
+
+
+@bp.route('/users/<int:user_id>', methods=['DELETE'])
+@jwt_required_custom
+@require_admin
+def delete_user_endpoint(user_id: int):
+    """
+    删除用户接口
+
+    Path Parameters:
+        - user_id: 用户ID
+
+    Response:
+        200 OK
+        {
+            "message": "User deleted successfully"
+        }
+    """
+    from app.services.admin_service import delete_user
+    admin = g.current_user
+
+    success, result = delete_user(
+        user_id=user_id,
+        admin_id=admin.id
+    )
+
+    if not success:
+        if 'not found' in result.get('error', '').lower():
+            return jsonify(result), 404
+        return jsonify(result), 400
+
+    return jsonify(result), 200
+
+
 @bp.route('/reviewers', methods=['GET'])
 @jwt_required_custom
 @require_admin

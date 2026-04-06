@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>提交插件 - 开源插件市场</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <a href="/" class="logo">开源插件市场</a>
+        <nav class="nav-links">
+          <a href="store.html" class="nav-link">浏览商店</a>
+          <div class="user-container"></div>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Layout with Sidebar -->
+    <div class="layout-with-sidebar">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">开发者中心</div>
+          <ul class="sidebar-nav">
+            <li class="sidebar-nav-item">
+              <a href="developer.html" class="sidebar-nav-link">
+                <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                </svg>
+                仪表盘
+              </a>
+            </li>
+            <li class="sidebar-nav-item">
+              <a href="my-plugins.html" class="sidebar-nav-link">
+                <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                </svg>
+                我的插件
+              </a>
+            </li>
+            <li class="sidebar-nav-item">
+              <a href="submit-plugin.html" class="sidebar-nav-link active">
+                <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                提交插件
+              </a>
+            </li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <h1 class="page-title">提交新插件</h1>
+          <p class="page-description">从 GitHub 仓库提交您的插件</p>
+        </div>
+
+        <!-- Submit Form -->
+        <div class="card">
+          <div class="card-body">
+            <form id="submit-form" class="form">
+              <div class="form-group">
+                <label class="form-label">GitHub 仓库 URL</label>
+                <div class="flex gap-2">
+                  <input type="url" id="github-url" class="form-input" placeholder="https://github.com/username/repo" required>
+                  <button type="button" class="btn btn-secondary" onclick="validateRepo()">验证</button>
+                </div>
+                <p class="form-hint">仓库必须包含有效的 manifest.json 文件</p>
+              </div>
+
+              <div id="repo-info" style="display: none;">
+                <div class="alert alert-info" style="margin-bottom: 1rem;">
+                  <div class="flex items-center gap-2">
+                    <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <div>
+                      <p id="repo-name" style="font-weight: 500;"></p>
+                      <p id="repo-description" style="font-size: 0.875rem; color: var(--color-text-secondary);"></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">分类</label>
+                <select id="category" class="form-select" required>
+                  <option value="">请选择分类</option>
+                  <option value="productivity">生产力</option>
+                  <option value="developer-tools">开发工具</option>
+                  <option value="design">设计</option>
+                  <option value="communication">通讯</option>
+                  <option value="utilities">实用工具</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">标签（用逗号分隔）</label>
+                <input type="text" id="tags" class="form-input" placeholder="例如：自动化, 效率, 工具">
+              </div>
+
+              <div id="error-message" class="alert alert-error" style="display: none; margin-bottom: 1rem;">
+                <div class="flex items-center gap-2">
+                  <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  <span id="error-text"></span>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="submit-btn">
+                  <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                  </svg>
+                  提交插件
+                </button>
+                <a href="developer.html" class="btn btn-ghost">取消</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <p>开源插件市场 - 基于 GitHub OAuth 的元数据插件平台</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // 检查登录状态
+    if (!auth.isAuthenticated()) {
+      window.location.href = '/login.html?returnUrl=' + encodeURIComponent(window.location.pathname);
+    }
+
+    let validatedRepo = null;
+
+    // 验证仓库
+    async function validateRepo() {
+      const url = document.getElementById('github-url').value.trim();
+      const errorDiv = document.getElementById('error-message');
+      const errorText = document.getElementById('error-text');
+      const repoInfo = document.getElementById('repo-info');
+
+      if (!url) {
+        errorText.textContent = '请输入 GitHub 仓库 URL';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      try {
+        const response = await api.post('/plugins/validate', { githubUrl: url });
+        
+        if (response.valid) {
+          validatedRepo = response.repo;
+          document.getElementById('repo-name').textContent = response.repo.name;
+          document.getElementById('repo-description').textContent = response.repo.description || '暂无描述';
+          repoInfo.style.display = 'block';
+          errorDiv.style.display = 'none';
+        } else {
+          errorText.textContent = response.message || '仓库验证失败';
+          errorDiv.style.display = 'block';
+          repoInfo.style.display = 'none';
+        }
+      } catch (error) {
+        errorText.textContent = '验证失败，请检查仓库 URL 是否正确';
+        errorDiv.style.display = 'block';
+        repoInfo.style.display = 'none';
+      }
+    }
+
+    // 提交表单
+    document.getElementById('submit-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const submitBtn = document.getElementById('submit-btn');
+      const errorDiv = document.getElementById('error-message');
+      const errorText = document.getElementById('error-text');
+
+      if (!validatedRepo) {
+        errorText.textContent = '请先验证仓库';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      const category = document.getElementById('category').value;
+      if (!category) {
+        errorText.textContent = '请选择分类';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="loading-spinner" style="width: 16px; height: 16px; border-width: 2px;"></span> 提交中...';
+
+      if (!validatedRepo) {
+        errorText.textContent = '请先验证仓库';
+        errorDiv.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `
+          <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          提交插件
+        `;
+        return;
+      }
+
+      try {
+        await api.post('/developer/plugins', {
+          name: validatedRepo.name,
+          description: validatedRepo.description || '',
+          repo_url: document.getElementById('github-url').value.trim(),
+          category_id: parseInt(category)
+        });
+
+        window.location.href = 'developer.html?message=submit-success';
+      } catch (error) {
+        errorText.textContent = error.message || '提交失败，请重试';
+        errorDiv.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `
+          <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          提交插件
+        `;
+      }
+    });
+  </script>
+</body>
+</html>

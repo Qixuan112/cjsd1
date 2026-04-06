@@ -4,6 +4,7 @@
 提供开发者相关的业务逻辑，包括插件提交、列表获取和撤回功能
 """
 
+import os
 import re
 import requests
 from typing import Optional
@@ -13,6 +14,10 @@ from app import db
 from app.models.plugin import Plugin, PluginStatus
 from app.models.audit_log import AuditLog, AuditAction, ResourceType
 from app.services.plugin_service import fetch_github_stats
+
+
+# 从环境变量获取 GitHub API Token
+GITHUB_API_TOKEN = os.environ.get('GITHUB_API_TOKEN', '')
 
 
 def _parse_github_repo_url(repo_url: str) -> Optional[tuple[str, str]]:
@@ -40,12 +45,13 @@ def _parse_github_repo_url(repo_url: str) -> Optional[tuple[str, str]]:
     return None
 
 
-def validate_github_repo(repo_url: str) -> tuple[bool, Optional[dict]]:
+def validate_github_repo(repo_url: str, github_token: str = None) -> tuple[bool, Optional[dict]]:
     """
     验证 GitHub 仓库是否存在且可访问
     
     Args:
         repo_url: GitHub 仓库 URL
+        github_token: GitHub Personal Access Token（可选，用于提高 API 限制）
     
     Returns:
         (是否有效, 仓库信息或错误信息)
@@ -57,26 +63,66 @@ def validate_github_repo(repo_url: str) -> tuple[bool, Optional[dict]]:
     owner, repo = repo_info
     api_url = f'https://api.github.com/repos/{owner}/{repo}'
     
+    # 构建请求头
+    headers = {'Accept': 'application/vnd.github.v3+json'}
+    # 优先使用传入的 token，否则使用环境变量中的 token
+    token = github_token or GITHUB_API_TOKEN
+    if token:
+        headers['Authorization'] = f'token {token}'
+    
     try:
         response = requests.get(
             api_url,
             timeout=10,
-            headers={'Accept': 'application/vnd.github.v3+json'}
+            headers=headers
         )
         
         if response.status_code == 200:
             data = response.json()
+            
+            # 检查 manifest.json 是否存在
+            manifest_url = f'https://api.github.com/repos/{owner}/{repo}/contents/manifest.json'
+            manifest_response = requests.get(
+                manifest_url,
+                timeout=10,
+                headers=headers
+            )
+            
+            if manifest_response.status_code != 200:
+                return False, {'error': 'Repository must contain a manifest.json file'}
+            
+            # 解析 manifest.json
+            try:
+                manifest_data = manifest_response.json()
+                import base64
+                manifest_content = base64.b64decode(manifest_data.get('content', '')).decode('utf-8')
+                manifest = json.loads(manifest_content)
+                
+                # 使用 manifest 中的信息
+                plugin_name = manifest.get('display_name') or manifest.get('plugin_id') or repo
+                plugin_description = manifest.get('description') or data.get('description')
+            except Exception:
+                plugin_name = repo
+                plugin_description = data.get('description')
+            
             return True, {
                 'owner': owner,
                 'repo': repo,
+                'name': plugin_name,
                 'stars': data.get('stargazers_count', 0),
                 'forks': data.get('forks_count', 0),
-                'description': data.get('description'),
+                'stargazers_count': data.get('stargazers_count', 0),
+                'forks_count': data.get('forks_count', 0),
+                'description': plugin_description,
                 'last_updated': data.get('updated_at'),
                 'open_issues': data.get('open_issues_count', 0),
                 'language': data.get('language'),
                 'homepage': data.get('homepage'),
-                'license': data.get('license', {}).get('name') if data.get('license') else None
+                'license': data.get('license', {}).get('name') if data.get('license') else None,
+                'owner': {
+                    'avatar_url': data.get('owner', {}).get('avatar_url', ''),
+                    'login': data.get('owner', {}).get('login', '')
+                }
             }
         elif response.status_code == 404:
             return False, {'error': 'Repository not found'}
@@ -138,10 +184,13 @@ def submit_plugin(user_id: int, data: dict) -> tuple[bool, dict]:
         github_data={
             'stars': repo_info.get('stars', 0),
             'forks': repo_info.get('forks', 0),
+            'stargazers_count': repo_info.get('stargazers_count', 0),
+            'forks_count': repo_info.get('forks_count', 0),
             'last_updated': repo_info.get('last_updated'),
             'open_issues': repo_info.get('open_issues', 0),
             'language': repo_info.get('language'),
             'license': repo_info.get('license'),
+            'owner': repo_info.get('owner', {})
         }
     )
     

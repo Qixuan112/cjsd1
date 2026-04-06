@@ -3,7 +3,7 @@
  */
 
 // API 配置
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = '/api';
 
 // 存储键名
 const STORAGE_KEYS = {
@@ -40,6 +40,11 @@ const api = {
           return;
         }
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      // 处理 204 No Content 响应
+      if (response.status === 204) {
+        return null;
       }
       
       return await response.json();
@@ -259,9 +264,23 @@ function updateUserUI() {
   
   userContainers.forEach(container => {
     if (user) {
+      // 根据角色构建导航按钮
+      let navButtons = '<a href="developer.html" class="btn btn-ghost btn-sm">开发者中心</a>';
+      
+      // 审批者/管理员显示审批插件按钮
+      if (user.role === 'reviewer' || user.role === 'admin') {
+        navButtons += '<a href="review-plugins.html" class="btn btn-ghost btn-sm">审批插件</a>';
+      }
+      
+      // 管理员显示管理层按钮
+      if (user.role === 'admin') {
+        navButtons += '<a href="admin.html" class="btn btn-ghost btn-sm">管理层</a>';
+      }
+      
       container.innerHTML = `
         <div class="flex items-center gap-2">
-          <img src="${user.avatar || 'https://avatars.githubusercontent.com/u/0?v=4'}" alt="${user.username}" class="w-8 h-8 rounded-full">
+          ${navButtons}
+          <img src="${user.avatar || 'https://avatars.githubusercontent.com/u/0?v=4'}" alt="${user.username}" class="w-5 h-5 rounded-full">
           <span class="text-sm">${user.username}</span>
           <button class="btn btn-ghost btn-sm" onclick="auth.logout(); window.location.href='/'">退出</button>
         </div>

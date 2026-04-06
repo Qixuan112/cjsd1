@@ -114,6 +114,21 @@ def get_plugin_by_id(plugin_id: int) -> Optional[Plugin]:
     ).first()
 
 
+def get_plugin_by_id_for_reviewer(plugin_id: int) -> Optional[Plugin]:
+    """
+    根据 ID 获取插件详情（审批者用，可以查看任何状态的插件）
+    
+    Args:
+        plugin_id: 插件ID
+    
+    Returns:
+        Plugin 对象或 None
+    """
+    return db.session.query(Plugin).filter(
+        Plugin.id == plugin_id
+    ).first()
+
+
 def _parse_github_repo_url(repo_url: str) -> Optional[tuple[str, str]]:
     """
     解析 GitHub 仓库 URL，提取 owner 和 repo

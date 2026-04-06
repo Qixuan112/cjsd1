@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>插件审核 - 开源插件市场</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <a href="/" class="logo">开源插件市场</a>
+        <nav class="nav-links">
+          <a href="store.html" class="nav-link">浏览商店</a>
+          <div class="user-container"></div>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content" style="padding: 2rem 0;">
+      <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+          <h1 class="page-title">插件审核</h1>
+          <p class="page-description">审核待上架的插件</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid" style="margin-bottom: 2rem;">
+          <div class="stat-card">
+            <div class="stat-value" id="pending-count">-</div>
+            <div class="stat-label">待审核</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="approved-count">-</div>
+            <div class="stat-label">已通过</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="rejected-count">-</div>
+            <div class="stat-label">已驳回</div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs" style="margin-bottom: 1.5rem;">
+          <button class="tab-btn active" onclick="switchTab('pending')" id="tab-pending">待审核</button>
+          <button class="tab-btn" onclick="switchTab('reviewed')" id="tab-reviewed">已审核</button>
+        </div>
+
+        <!-- Pending Plugins List -->
+        <div id="pending-section">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">待审核插件</h2>
+            </div>
+            <div class="card-body">
+              <div id="pending-container">
+                <!-- Pending plugins will be loaded here -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reviewed Plugins List -->
+        <div id="reviewed-section" style="display: none;">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">审核记录</h2>
+            </div>
+            <div class="card-body">
+              <div id="reviewed-container">
+                <!-- Reviewed plugins will be loaded here -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <p>开源插件市场 - 基于 GitHub OAuth 的元数据插件平台</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Review Modal -->
+  <div id="review-modal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 700px; max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <h3 class="modal-title">审核插件</h3>
+        <button class="modal-close" onclick="closeReviewModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="review-modal-body">
+        <!-- Plugin details will be loaded here -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-error" onclick="showRejectForm()">驳回</button>
+        <button class="btn btn-success" onclick="approvePlugin()">通过</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reject Form Modal -->
+  <div id="reject-modal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title">驳回插件</h3>
+        <button class="modal-close" onclick="closeRejectModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">驳回原因 <span class="text-error">*</span></label>
+          <textarea class="form-textarea" id="reject-comment" rows="4" placeholder="请输入驳回原因，将通知给插件作者..."></textarea>
+          <p class="form-help">请详细说明驳回原因，帮助作者改进</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeRejectModal()">取消</button>
+        <button class="btn btn-error" onclick="confirmReject()">确认驳回</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // 当前审核的插件ID
+    let currentPluginId = null;
+    let currentPluginData = null;
+
+    // 检查登录状态和权限
+    (async function checkAuth() {
+      if (!auth.isAuthenticated()) {
+        window.location.href = '/login.html?returnUrl=' + encodeURIComponent(window.location.pathname);
+        return;
+      }
+      
+      // 检查是否是审批者或管理员
+      const user = auth.getUser();
+      if (!user || (user.role !== 'reviewer' && user.role !== 'admin')) {
+        alert('您没有权限访问此页面');
+        window.location.href = '/';
+        return;
+      }
+      
+      // 加载数据
+      loadStats();
+      loadPendingPlugins();
+    })();
+
+    // 加载统计数据
+    async function loadStats() {
+      try {
+        const stats = await api.get('/reviewer/stats');
+        document.getElementById('approved-count').textContent = stats.approved || 0;
+        document.getElementById('rejected-count').textContent = stats.rejected || 0;
+      } catch (error) {
+        console.error('加载统计失败:', error);
+      }
+      
+      // 加载待审核数量
+      try {
+        const queue = await api.get('/reviewer/queue');
+        document.getElementById('pending-count').textContent = queue.total || 0;
+      } catch (error) {
+        document.getElementById('pending-count').textContent = '0';
+      }
+    }
+
+    // 切换标签
+    function switchTab(tab) {
+      // 更新按钮状态
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('tab-' + tab).classList.add('active');
+      
+      // 显示/隐藏内容
+      if (tab === 'pending') {
+        document.getElementById('pending-section').style.display = 'block';
+        document.getElementById('reviewed-section').style.display = 'none';
+        loadPendingPlugins();
+      } else {
+        document.getElementById('pending-section').style.display = 'none';
+        document.getElementById('reviewed-section').style.display = 'block';
+        loadReviewedPlugins();
+      }
+    }
+
+    // 加载待审核插件
+    async function loadPendingPlugins() {
+      const container = document.getElementById('pending-container');
+      
+      try {
+        utils.showLoading(container, '加载中...');
+        
+        const data = await api.get('/reviewer/queue');
+        const plugins = data.items || [];
+
+        if (plugins.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <h3 class="empty-title">暂无待审核插件</h3>
+              <p class="empty-description">当前没有需要审核的插件</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = `
+          <div class="plugin-list">
+            ${plugins.map(plugin => `
+              <div class="plugin-item" style="display: flex; align-items: start; padding: 1rem; border: 1px solid var(--border-color); border-radius: 0.5rem; margin-bottom: 1rem;">
+                <img src="${plugin.github_data?.owner?.avatar_url || 'https://avatars.githubusercontent.com/u/0?v=4'}" alt="${plugin.author}" style="width: 48px; height: 48px; border-radius: 50%; margin-right: 1rem;">
+                <div style="flex: 1;">
+                  <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                    <h3 style="margin: 0; font-size: 1.125rem;">${plugin.name}</h3>
+                    <span class="badge badge-warning">待审核</span>
+                  </div>
+                  <p style="margin: 0 0 0.5rem 0; color: var(--text-secondary); font-size: 0.875rem;">${plugin.description || '暂无描述'}</p>
+                  <div style="display: flex; align-items: center; gap: 1rem; font-size: 0.75rem; color: var(--text-secondary);">
+                    <span>作者: ${plugin.author}</span>
+                    <span>分类: ${plugin.category || '未分类'}</span>
+                    <span>版本: ${plugin.version || 'unknown'}</span>
+                    <span>提交: ${utils.formatDate(plugin.created_at)}</span>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-primary btn-sm" onclick="openReviewModal(${plugin.id})">审核</button>
+                  <a href="${plugin.repo_url}" target="_blank" class="btn btn-ghost btn-sm">查看仓库</a>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } catch (error) {
+        utils.showError(container, '加载失败，请重试', 'loadPendingPlugins()');
+      }
+    }
+
+    // 加载已审核记录
+    async function loadReviewedPlugins() {
+      const container = document.getElementById('reviewed-container');
+      
+      try {
+        utils.showLoading(container, '加载中...');
+        
+        const data = await api.get('/reviewer/reviewed');
+        const records = data.items || [];
+
+        if (records.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+              </svg>
+              <h3 class="empty-title">暂无审核记录</h3>
+              <p class="empty-description">您还没有审核过任何插件</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = `
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>插件名称</th>
+                  <th>操作</th>
+                  <th>审核意见</th>
+                  <th>审核时间</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${records.map(record => `
+                  <tr>
+                    <td>${record.plugin_name}</td>
+                    <td>
+                      <span class="badge ${record.action === 'approve' ? 'badge-success' : 'badge-error'}">
+                        ${record.action === 'approve' ? '通过' : '驳回'}
+                      </span>
+                    </td>
+                    <td>${record.comment || '-'}</td>
+                    <td>${utils.formatDate(record.created_at)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } catch (error) {
+        utils.showError(container, '加载失败，请重试', 'loadReviewedPlugins()');
+      }
+    }
+
+    // 打开审核模态框
+    async function openReviewModal(pluginId) {
+      currentPluginId = pluginId;
+      
+      try {
+        // 获取插件详情（使用审批者专用接口）
+        const plugin = await api.get(`/reviewer/plugins/${pluginId}`);
+        currentPluginData = plugin;
+        
+        const modalBody = document.getElementById('review-modal-body');
+        modalBody.innerHTML = `
+          <div style="margin-bottom: 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+              <img src="${plugin.github_data?.owner?.avatar_url || 'https://avatars.githubusercontent.com/u/0?v=4'}" alt="${plugin.author}" style="width: 64px; height: 64px; border-radius: 50%;">
+              <div>
+                <h2 style="margin: 0;">${plugin.name}</h2>
+                <p style="margin: 0.25rem 0 0 0; color: var(--text-secondary);">by ${plugin.author}</p>
+              </div>
+            </div>
+            <p style="color: var(--text-secondary);">${plugin.description || '暂无描述'}</p>
+          </div>
+          
+          <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+            <h4 style="margin: 0 0 0.5rem 0; font-size: 0.875rem;">仓库信息</h4>
+            <div style="font-size: 0.875rem; color: var(--text-secondary);">
+              <p style="margin: 0.25rem 0;"><strong>仓库地址:</strong> <a href="${plugin.repo_url}" target="_blank">${plugin.repo_url}</a></p>
+              <p style="margin: 0.25rem 0;"><strong>分类:</strong> ${plugin.category || '未分类'}</p>
+              <p style="margin: 0.25rem 0;"><strong>版本:</strong> ${plugin.version || 'unknown'}</p>
+            </div>
+          </div>
+          
+          ${plugin.manifest ? `
+            <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+              <h4 style="margin: 0 0 0.5rem 0; font-size: 0.875rem;">Manifest 信息</h4>
+              <pre style="margin: 0; font-size: 0.75rem; overflow-x: auto;"><code>${JSON.stringify(plugin.manifest, null, 2)}</code></pre>
+            </div>
+          ` : ''}
+          
+          <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 0.5rem;">
+            <h4 style="margin: 0 0 0.5rem 0; font-size: 0.875rem;">GitHub 数据</h4>
+            <div style="font-size: 0.875rem; color: var(--text-secondary);">
+              <p style="margin: 0.25rem 0;"><strong>Stars:</strong> ${plugin.github_data?.stargazers_count || 0}</p>
+              <p style="margin: 0.25rem 0;"><strong>Forks:</strong> ${plugin.github_data?.forks_count || 0}</p>
+              <p style="margin: 0.25rem 0;"><strong>Language:</strong> ${plugin.github_data?.language || 'Unknown'}</p>
+            </div>
+          </div>
+        `;
+        
+        document.getElementById('review-modal').style.display = 'flex';
+      } catch (error) {
+        alert('加载插件详情失败：' + error.message);
+      }
+    }
+
+    // 关闭审核模态框
+    function closeReviewModal() {
+      document.getElementById('review-modal').style.display = 'none';
+      currentPluginId = null;
+      currentPluginData = null;
+    }
+
+    // 显示驳回表单
+    function showRejectForm() {
+      document.getElementById('reject-modal').style.display = 'flex';
+    }
+
+    // 关闭驳回模态框
+    function closeRejectModal() {
+      document.getElementById('reject-modal').style.display = 'none';
+      document.getElementById('reject-comment').value = '';
+    }
+
+    // 通过插件
+    async function approvePlugin() {
+      if (!currentPluginId) return;
+      
+      if (!confirm('确定要通过这个插件吗？')) {
+        return;
+      }
+      
+      try {
+        await api.post(`/reviewer/plugins/${currentPluginId}/approve`, {});
+        closeReviewModal();
+        alert('插件已通过！');
+        loadStats();
+        loadPendingPlugins();
+      } catch (error) {
+        if (error.message && error.message.includes('400')) {
+          alert('该插件已被审批或状态已变更，请刷新页面查看最新状态');
+          loadPendingPlugins();
+        } else {
+          alert('操作失败：' + error.message);
+        }
+      }
+    }
+
+    // 确认驳回
+    async function confirmReject() {
+      if (!currentPluginId) return;
+      
+      const comment = document.getElementById('reject-comment').value.trim();
+      if (!comment) {
+        alert('请输入驳回原因');
+        return;
+      }
+      
+      try {
+        await api.post(`/reviewer/plugins/${currentPluginId}/reject`, { comment });
+        closeRejectModal();
+        closeReviewModal();
+        alert('插件已驳回！');
+        loadStats();
+        loadPendingPlugins();
+      } catch (error) {
+        if (error.message && error.message.includes('400')) {
+          alert('该插件已被审批或状态已变更，请刷新页面查看最新状态');
+          loadPendingPlugins();
+        } else {
+          alert('操作失败：' + error.message);
+        }
+      }
+    }
+
+    // 点击模态框外部关闭
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('modal')) {
+        e.target.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

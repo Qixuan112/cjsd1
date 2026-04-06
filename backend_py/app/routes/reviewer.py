@@ -14,6 +14,7 @@ from app.services.reviewer_service import (
     get_reviewer_stats,
     get_reviewed_list
 )
+from app.services.plugin_service import get_plugin_by_id_for_reviewer
 
 bp = Blueprint('reviewer', __name__)
 
@@ -69,6 +70,49 @@ def list_review_queue():
     
     # 获取待审核队列
     result = get_review_queue(page=page, limit=limit)
+    
+    return jsonify(result), 200
+
+
+@bp.route('/plugins/<int:plugin_id>', methods=['GET'])
+@jwt_required_custom
+@require_reviewer
+def get_plugin_detail_for_reviewer(plugin_id: int):
+    """
+    获取插件详情接口（审批者用）
+    
+    返回插件详情，包括 GitHub 数据和 manifest
+    可以查看任何状态的插件（pending/approved/rejected）
+    
+    Path Parameters:
+        - plugin_id: 插件ID
+    
+    Response:
+        {
+            "id": 1,
+            "name": "Plugin Name",
+            "description": "...",
+            "repo_url": "https://github.com/...",
+            "category_id": 1,
+            "category": "Tools",
+            "author_id": 1,
+            "author": "username",
+            "status": "pending",
+            "manifest": {...},
+            "github_data": {...},
+            "version": "1.0.0",
+            "created_at": "2024-01-01T00:00:00Z",
+            "updated_at": "2024-01-01T00:00:00Z"
+        }
+    """
+    # 获取插件（审批者可以查看任何状态的插件）
+    plugin = get_plugin_by_id_for_reviewer(plugin_id)
+    
+    if not plugin:
+        return jsonify({'error': 'Plugin not found'}), 404
+    
+    # 构建响应数据
+    result = plugin.to_dict()
     
     return jsonify(result), 200
 

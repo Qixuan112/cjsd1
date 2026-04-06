@@ -556,3 +556,84 @@ def get_audit_logs(page: int = 1, limit: int = 20) -> dict:
         'page': page,
         'limit': limit
     }
+
+
+def update_user_status(user_id: int, is_active: bool, admin_id: int) -> tuple[bool, dict]:
+    """
+    更新用户状态（禁用/启用）
+
+    Args:
+        user_id: 用户ID
+        is_active: 是否启用
+        admin_id: 管理员ID
+
+    Returns:
+        (是否成功, 结果字典)
+    """
+    # 获取用户
+    user = User.query.get(user_id)
+    if not user:
+        return False, {'error': 'User not found'}
+
+    # 不能禁用自己
+    if user.id == admin_id:
+        return False, {'error': 'Cannot disable yourself'}
+
+    # 更新状态
+    user.is_active = is_active
+    db.session.commit()
+
+    # 记录审计日志
+    action = AuditAction.enable if is_active else AuditAction.disable
+    log = AuditLog(
+        admin_id=admin_id,
+        action=action,
+        resource_type=ResourceType.user,
+        resource_id=user.id,
+        details={'username': user.username, 'is_active': is_active}
+    )
+    db.session.add(log)
+    db.session.commit()
+
+    return True, {
+        'message': f"User {'enabled' if is_active else 'disabled'} successfully",
+        'user': user.to_dict()
+    }
+
+
+def delete_user(user_id: int, admin_id: int) -> tuple[bool, dict]:
+    """
+    删除用户
+
+    Args:
+        user_id: 用户ID
+        admin_id: 管理员ID
+
+    Returns:
+        (是否成功, 结果字典)
+    """
+    # 获取用户
+    user = User.query.get(user_id)
+    if not user:
+        return False, {'error': 'User not found'}
+
+    # 不能删除自己
+    if user.id == admin_id:
+        return False, {'error': 'Cannot delete yourself'}
+
+    # 记录审计日志
+    log = AuditLog(
+        admin_id=admin_id,
+        action=AuditAction.delete,
+        resource_type=ResourceType.user,
+        resource_id=user.id,
+        details={'username': user.username, 'email': user.email}
+    )
+    db.session.add(log)
+    db.session.commit()
+
+    # 删除用户
+    db.session.delete(user)
+    db.session.commit()
+
+    return True, {'message': 'User deleted successfully'}

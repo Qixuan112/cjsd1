@@ -112,9 +112,6 @@ class Plugin(db.Model):
     
     def to_summary_dict(self) -> dict:
         """返回插件摘要信息（用于列表展示）"""
-        stars = self.github_data.get('stars', 0) if self.github_data else 0
-        forks = self.github_data.get('forks', 0) if self.github_data else 0
-        
         return {
             'id': self.id,
             'name': self.name,
@@ -123,8 +120,8 @@ class Plugin(db.Model):
             'author': self.author.username if self.author else None,
             'status': self.status.value,
             'version': self.version,
-            'stars': stars,
-            'forks': forks,
+            'github_data': self.github_data,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
             'created_at': self.created_at.isoformat() if self.created_at else None,
         }
     

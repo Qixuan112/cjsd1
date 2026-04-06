@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>用户管理 - 开源插件市场</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <a href="/" class="logo">开源插件市场</a>
+        <nav class="nav-links">
+          <a href="store.html" class="nav-link">浏览商店</a>
+          <div class="user-container"></div>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Layout with Sidebar -->
+    <div class="layout-with-sidebar">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">管理中心</div>
+          <ul class="sidebar-nav">
+            <li class="sidebar-nav-item">
+              <a href="admin.html" class="sidebar-nav-link">
+                <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                </svg>
+                仪表盘
+              </a>
+            </li>
+            <li class="sidebar-nav-item">
+              <a href="admin-users.html" class="sidebar-nav-link active">
+                <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+                用户管理
+              </a>
+            </li>
+            <li class="sidebar-nav-item">
+              <a href="admin-plugins.html" class="sidebar-nav-link">
+                <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                </svg>
+                插件管理
+              </a>
+            </li>
+            <li class="sidebar-nav-item">
+              <a href="admin-reviewers.html" class="sidebar-nav-link">
+                <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                审批者管理
+              </a>
+            </li>
+            <li class="sidebar-nav-item">
+              <a href="admin-stats.html" class="sidebar-nav-link">
+                <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+                数据统计
+              </a>
+            </li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <h1 class="page-title">用户管理</h1>
+          <p class="page-description">管理平台所有用户</p>
+        </div>
+
+        <!-- User List -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">用户列表</h2>
+          </div>
+          <div class="card-body">
+            <div id="users-container">
+              <!-- Users will be loaded here -->
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <p>开源插件市场 - 基于 GitHub OAuth 的元数据插件平台</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // 加载用户列表
+    async function loadUsers() {
+      const container = document.getElementById('users-container');
+      
+      try {
+        utils.showLoading(container, '加载中...');
+        
+        const data = await api.get('/admin/users');
+        const users = data.items || [];
+
+        if (users.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+              </svg>
+              <h3 class="empty-title">暂无用户</h3>
+              <p class="empty-description">系统中还没有用户</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = `
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>用户名</th>
+                  <th>邮箱</th>
+                  <th>角色</th>
+                  <th>注册时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${users.map(user => `
+                  <tr>
+                    <td>${user.id}</td>
+                    <td>
+                      <div class="flex items-center gap-2">
+                        <img src="${user.avatar || 'https://avatars.githubusercontent.com/u/0?v=4'}" alt="${user.username}" class="w-6 h-6 rounded-full">
+                        <span>${user.username}</span>
+                      </div>
+                    </td>
+                    <td>${user.email || '-'}</td>
+                    <td><span class="badge badge-${getRoleClass(user.role)}">${getRoleLabel(user.role)}</span></td>
+                    <td>${utils.formatDate(user.createdAt)}</td>
+                    <td>
+                      <div class="flex gap-1">
+                        <button class="btn btn-ghost btn-sm" onclick="editUser(${user.id}, '${user.username}', '${user.role}', ${user.is_active})">编辑</button>
+                        <button class="btn btn-${user.is_active ? 'error' : 'success'} btn-sm" onclick="toggleUserStatus(${user.id}, ${!user.is_active})">${user.is_active ? '禁用' : '启用'}</button>
+                        <button class="btn btn-error btn-sm" onclick="deleteUser(${user.id}, '${user.username}')">删除</button>
+                      </div>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } catch (error) {
+        utils.showError(container, '加载失败，请重试', 'loadUsers()');
+      }
+    }
+
+    function getRoleClass(role) {
+      const classes = {
+        'user': 'default',
+        'developer': 'info',
+        'reviewer': 'warning',
+        'admin': 'error'
+      };
+      return classes[role] || 'default';
+    }
+
+    function getRoleLabel(role) {
+      const labels = {
+        'user': '普通用户',
+        'developer': '开发者',
+        'reviewer': '审核员',
+        'admin': '管理员'
+      };
+      return labels[role] || role;
+    }
+
+    // 编辑用户
+    function editUser(userId, username, currentRole, isActive) {
+      const modal = document.createElement('div');
+      modal.className = 'modal';
+      modal.style.display = 'flex';
+      modal.innerHTML = `
+        <div class="modal-content" style="max-width: 400px;">
+          <div class="modal-header">
+            <h3 class="modal-title">编辑用户 - ${username}</h3>
+            <button class="modal-close" onclick="this.closest('.modal').remove()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-label">角色</label>
+              <select id="edit-role" class="form-select">
+                <option value="user" ${currentRole === 'user' ? 'selected' : ''}>普通用户</option>
+                <option value="developer" ${currentRole === 'developer' ? 'selected' : ''}>开发者</option>
+                <option value="reviewer" ${currentRole === 'reviewer' ? 'selected' : ''}>审核员</option>
+                <option value="admin" ${currentRole === 'admin' ? 'selected' : ''}>管理员</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="this.closest('.modal').remove()">取消</button>
+            <button class="btn btn-primary" onclick="saveUserRole(${userId})">保存</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    // 保存用户角色
+    async function saveUserRole(userId) {
+      const role = document.getElementById('edit-role').value;
+      try {
+        await api.put(`/admin/users/${userId}/role`, { role });
+        alert('用户角色更新成功');
+        document.querySelector('.modal').remove();
+        loadUsers();
+      } catch (error) {
+        alert('更新失败: ' + error.message);
+      }
+    }
+
+    // 切换用户状态（禁用/启用）
+    async function toggleUserStatus(userId, isActive) {
+      const action = isActive ? '启用' : '禁用';
+      if (!confirm(`确定要${action}该用户吗？`)) return;
+      
+      try {
+        await api.put(`/admin/users/${userId}/status`, { is_active: isActive });
+        alert(`用户${action}成功`);
+        loadUsers();
+      } catch (error) {
+        alert('操作失败: ' + error.message);
+      }
+    }
+
+    // 删除用户
+    async function deleteUser(userId, username) {
+      if (!confirm(`确定要删除用户 "${username}" 吗？此操作不可恢复！`)) return;
+      
+      try {
+        await api.delete(`/admin/users/${userId}`);
+        alert('用户删除成功');
+        loadUsers();
+      } catch (error) {
+        alert('删除失败: ' + error.message);
+      }
+    }
+
+    // 检查登录状态和管理员权限
+    (async function checkAuth() {
+      if (!auth.isAuthenticated()) {
+        window.location.href = '/login.html?returnUrl=' + encodeURIComponent(window.location.pathname);
+        return;
+      }
+      
+      // 检查是否是管理员
+      const user = auth.getUser();
+      if (!user || user.role !== 'admin') {
+        alert('您没有权限访问此页面');
+        window.location.href = '/';
+        return;
+      }
+      
+      // 加载用户列表
+      loadUsers();
+    })();
+  </script>
+</body>
+</html>

@@ -196,11 +196,11 @@
         const stats = await api.get('/admin/stats');
         
         const totalPlugins = stats.plugins ? 
-          stats.plugins.draft + stats.plugins.pending + stats.plugins.approved + 
-          stats.plugins.rejected + stats.plugins.banned + stats.plugins.hidden : 0;
+          (stats.plugins.draft || 0) + (stats.plugins.pending || 0) + (stats.plugins.approved || 0) + 
+          (stats.plugins.rejected || 0) + (stats.plugins.removed || 0) : 0;
         
         const totalUsers = stats.users ?
-          stats.users.developer + stats.users.reviewer + stats.users.admin : 0;
+          (stats.users.developers || 0) + (stats.users.reviewers || 0) + (stats.users.admins || 0) + (stats.users.users || 0) : 0;
         
         document.getElementById('stat-total-plugins').textContent = totalPlugins;
         document.getElementById('stat-total-users').textContent = totalUsers;

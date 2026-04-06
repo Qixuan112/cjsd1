@@ -12,6 +12,7 @@ from app.services.plugin_service import (
     fetch_github_readme,
     fetch_github_stats
 )
+from app.services.developer_service import validate_github_repo
 
 bp = Blueprint('plugins', __name__)
 
@@ -140,3 +141,53 @@ def get_plugin_detail(plugin_id: int):
     result['readme'] = readme
     
     return jsonify(result), 200
+
+
+@bp.route('/validate', methods=['POST'])
+def validate_repo():
+    """
+    验证 GitHub 仓库接口
+    
+    验证 GitHub 仓库是否存在且可访问
+    
+    Request Body:
+        {
+            "githubUrl": "https://github.com/owner/repo"
+        }
+    
+    Response:
+        {
+            "valid": true,
+            "repo": {
+                "owner": "owner",
+                "repo": "repo",
+                "stars": 100,
+                "description": "..."
+            }
+        }
+    """
+    from flask import g
+    from app.utils.decorators import jwt_required_custom
+    
+    # 获取请求数据
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'Request body is required'}), 400
+    
+    github_url = data.get('githubUrl')
+    if not github_url:
+        return jsonify({'error': 'githubUrl is required'}), 400
+    
+    # 验证仓库
+    is_valid, result = validate_github_repo(github_url)
+    
+    if is_valid:
+        return jsonify({
+            'valid': True,
+            'repo': result
+        }), 200
+    else:
+        return jsonify({
+            'valid': False,
+            'message': result.get('error', 'Validation failed')
+        }), 400
