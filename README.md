@@ -1,6 +1,25 @@
-# 插件市场 (Plugin Marketplace)
+# 🔌 插件市场 (Plugin Marketplace)
 
-一个功能完善的插件市场系统，支持插件的提交、审核、发布和管理。
+<p align="center">
+  <b>一个功能完善的插件市场系统，支持插件的提交、审核、发布和管理。</b>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.8+-blue.svg" alt="Python 3.8+">
+  <img src="https://img.shields.io/badge/Flask-2.0+-green.svg" alt="Flask 2.0+">
+  <img src="https://img.shields.io/badge/MySQL-5.7+-orange.svg" alt="MySQL 5.7+">
+  <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT">
+</p>
+
+<p align="center">
+  <a href="#-功能特性">功能特性</a> •
+  <a href="#-项目架构">项目架构</a> •
+  <a href="#-快速开始">快速开始</a> •
+  <a href="#-文档">文档</a> •
+  <a href="#-api-概览">API</a>
+</p>
+
+---
 
 ## ✨ 功能特性
 
@@ -39,16 +58,20 @@
 ## 🛠️ 技术栈
 
 ### 后端
-- [Flask](https://flask.palletsprojects.com/) - Python Web 框架
-- [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/) - ORM 数据库操作
-- [Flask-JWT-Extended](https://flask-jwt-extended.readthedocs.io/) - JWT 认证
-- [MySQL](https://www.mysql.com/) - 数据库
-- [GitHub OAuth](https://docs.github.com/en/developers/apps) - 第三方登录
+| 技术 | 说明 |
+|------|------|
+| [Flask](https://flask.palletsprojects.com/) | Python Web 框架 |
+| [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/) | ORM 数据库操作 |
+| [Flask-JWT-Extended](https://flask-jwt-extended.readthedocs.io/) | JWT 认证 |
+| [MySQL](https://www.mysql.com/) | 数据库 |
+| [GitHub OAuth](https://docs.github.com/en/developers/apps) | 第三方登录 |
 
 ### 前端
-- HTML5 + CSS3 + JavaScript (ES6+)
-- 原生 Fetch API
-- 响应式设计
+| 技术 | 说明 |
+|------|------|
+| HTML5 + CSS3 + JavaScript (ES6+) | 原生前端技术栈 |
+| Fetch API | 原生 HTTP 请求 |
+| 响应式设计 | 支持多端访问 |
 
 ## 🚀 快速开始
 
@@ -60,7 +83,7 @@
 ### 1. 克隆项目
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/your-username/plugin-marketplace.git
 cd plugin-marketplace
 ```
 
@@ -161,9 +184,11 @@ LOG_LEVEL=INFO
 
 ## 📚 文档
 
-- [后端 API 文档](./backend_py/API.md) - 详细的 RESTful API 接口文档
-- [前端集成指南](./backend_py/FRONTEND_INTEGRATION.md) - 前端与后端的集成说明
-- [后端说明文档](./backend_py/README.md) - 后端的详细说明
+| 文档 | 说明 |
+|------|------|
+| [后端 API 文档](./backend_py/API.md) | 详细的 RESTful API 接口文档 |
+| [前端集成指南](./backend_py/FRONTEND_INTEGRATION.md) | 前端与后端的集成说明 |
+| [后端说明文档](./backend_py/README.md) | 后端的详细说明 |
 
 ## 👥 用户角色
 
@@ -184,20 +209,22 @@ LOG_LEVEL=INFO
 | 管理端 | `/api/admin/*` | 用户、插件、分类管理 |
 | 用户端 | `/api/user/*` | 个人信息 |
 
-## 📸 页面截图
+## 📸 页面预览
 
-- **首页** - 插件浏览和搜索
-- **登录页** - GitHub OAuth 登录
-- **插件详情** - 查看插件信息和安装
-- **开发者中心** - 提交和管理插件
-- **管理后台** - 系统管理和审批
+| 页面 | 功能描述 |
+|------|----------|
+| **首页** | 插件浏览和搜索 |
+| **登录页** | GitHub OAuth 登录 |
+| **插件详情** | 查看插件信息和安装 |
+| **开发者中心** | 提交和管理插件 |
+| **管理后台** | 系统管理和审批 |
 
 ## 🔒 安全说明
 
-- 生产环境请务必修改默认的 JWT 密钥
-- 使用 HTTPS 部署
-- 妥善保管 GitHub OAuth 密钥
-- 定期备份数据库
+- ⚠️ 生产环境请务必修改默认的 JWT 密钥
+- 🔒 使用 HTTPS 部署
+- 🗝️ 妥善保管 GitHub OAuth 密钥
+- 💾 定期备份数据库
 
 ## 🤝 贡献指南
 
@@ -209,8 +236,14 @@ LOG_LEVEL=INFO
 
 ## 📄 许可证
 
-[MIT License](./LICENSE)
+本项目采用 [MIT License](./LICENSE) 开源许可证。
 
 ---
 
-如有问题或建议，欢迎提交 Issue 或 PR。
+<p align="center">
+  如有问题或建议，欢迎提交 <a href="https://github.com/your-username/plugin-marketplace/issues">Issue</a> 或 <a href="https://github.com/your-username/plugin-marketplace/pulls">Pull Request</a>
+</p>
+
+<p align="center">
+  ⭐ Star 这个项目，如果你发现它有帮助！
+</p>
