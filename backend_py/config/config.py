@@ -39,6 +39,20 @@ class Config:
     # 分页配置
     DEFAULT_PAGE_SIZE = 20
     MAX_PAGE_SIZE = 100
+    
+    # 头像缓存配置
+    # GitHub 头像国内镜像，可选值:
+    # - 'github' (原始 GitHub)
+    # - 'ghproxy' (ghproxy.com 镜像)
+    # - 'fastgit' (fastgit.org 镜像)
+    # - 'jsdelivr' (jsdelivr CDN)
+    AVATAR_MIRROR = os.environ.get('AVATAR_MIRROR', 'github')
+    
+    # 是否启用头像缓存（国内服务器建议开启）
+    AVATAR_CACHE_ENABLED = os.environ.get('AVATAR_CACHE_ENABLED', 'true').lower() == 'true'
+    
+    # 头像请求超时时间（国内服务器建议增加）
+    AVATAR_REQUEST_TIMEOUT = int(os.environ.get('AVATAR_REQUEST_TIMEOUT', '15'))
 
 
 class DevelopmentConfig(Config):

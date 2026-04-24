@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/Python-3.8+-blue.svg" alt="Python 3.8+">
   <img src="https://img.shields.io/badge/Flask-2.0+-green.svg" alt="Flask 2.0+">
   <img src="https://img.shields.io/badge/MySQL-5.7+-orange.svg" alt="MySQL 5.7+">
-  <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT">
+  <img src="https://img.shields.io/badge/License-AGPL--3.0-yellow.svg" alt="License: AGPL-3.0">
 </p>
 
 <p align="center">
@@ -32,6 +32,9 @@
 - **📊 数据统计** - 平台数据统计和可视化展示
 - **🌐 响应式设计** - 支持桌面和移动设备访问
 - **🔍 搜索筛选** - 插件搜索、分类筛选、排序功能
+- **🖼️ 头像代理缓存** - 自动缓存 GitHub 头像，加速加载并减少源站请求
+- **🌍 中英双语** - 前端国际化支持，可切换中文/英文界面
+- **🔄 GitHub 数据同步** - 支持同步插件 Stars、Forks 等 GitHub 元数据
 
 ## 🏗️ 项目架构
 
@@ -39,15 +42,16 @@
 .
 ├── backend_py/               # Python + Flask 后端 API
 │   ├── app/                  # 应用主目录
-│   │   ├── models/           # 数据库模型 (User, Plugin, Category, Review, AuditLog)
-│   │   ├── routes/           # API 路由 (auth, plugins, developer, reviewer, admin, user)
-│   │   ├── services/         # 业务逻辑层
+│   │   ├── models/           # 数据库模型 (User, Plugin, Category, Review, AuditLog, AvatarCache)
+│   │   ├── routes/           # API 路由 (auth, plugins, developer, reviewer, admin, users, avatar)
+│   │   ├── services/         # 业务逻辑层 (含 avatar_service)
 │   │   └── utils/            # 工具函数 (decorators)
 │   ├── config/               # 配置文件
 │   ├── migrations/           # 数据库迁移文件
 │   ├── requirements.txt      # Python 依赖
 │   ├── .env.example          # 环境变量示例
 │   ├── wsgi.py               # WSGI 入口
+│   ├── update_plugins_github_data.py  # GitHub 数据同步脚本
 │   ├── API.md                # 详细 API 文档
 │   ├── FRONTEND_INTEGRATION.md # 前端集成指南
 │   └── README.md             # 后端说明文档
@@ -68,6 +72,11 @@
     ├── admin-stats.html      # 统计数据
     ├── review-plugins.html   # 插件审批
     ├── plugin-detail.html    # 插件详情页
+    ├── author.html           # 作者主页
+    ├── contributors.html     # 贡献者页面
+    ├── privacy.html          # 隐私政策
+    ├── terms.html            # 使用条款
+    ├── i18n.js               # 国际化模块
     ├── app.js                # 前端主逻辑
     └── styles.css            # 样式文件
 ```
@@ -102,7 +111,7 @@
 ### 1. 克隆项目
 
 ```bash
-git clone https://github.com/your-username/plugin-marketplace.git
+git clone https://github.com/Qixuan112/cjsd1.git
 cd plugin-marketplace
 ```
 
@@ -228,7 +237,8 @@ LOG_LEVEL=INFO
 | 开发者 | `/api/developer/*` | 提交插件、我的插件、更新插件 | 登录用户 |
 | 审批者 | `/api/reviewer/*` | 审批队列、审批操作、审批历史 | Reviewer+ |
 | 管理端 | `/api/admin/*` | 用户/插件/分类/审批者管理、审计日志、统计 | Admin |
-| 用户端 | `/api/user/*` | 个人信息、修改信息 | 登录用户 |
+| 用户端 | `/api/users/*` | 个人信息、修改信息 | 登录用户 |
+| 头像代理 | `/api/avatar/*` | 头像缓存、代理、统计 | 公开 |
 
 ## 📸 页面预览
 
@@ -248,6 +258,11 @@ LOG_LEVEL=INFO
 | **分类管理** | `admin-categories.html` | 管理插件分类 (Admin) |
 | **审批者管理** | `admin-reviewers.html` | 设置审批者 (Admin) |
 | **统计报表** | `admin-stats.html` | 查看平台统计数据 (Admin) |
+| **OAuth 回调** | `callback.html` | GitHub 登录回调处理 |
+| **作者主页** | `author.html` | 查看作者信息和插件列表 |
+| **贡献者** | `contributors.html` | 开源贡献者和社区支持者 |
+| **隐私政策** | `privacy.html` | 隐私政策说明 |
+| **使用条款** | `terms.html` | 服务使用条款 |
 
 ## 🔒 安全说明
 
@@ -266,12 +281,12 @@ LOG_LEVEL=INFO
 
 ## 📄 许可证
 
-本项目采用 [MIT License](./LICENSE) 开源许可证。
+本项目采用 [AGPL-3.0](./LICENSE) 开源许可证。
 
 ---
 
 <p align="center">
-  如有问题或建议，欢迎提交 <a href="https://github.com/your-username/plugin-marketplace/issues">Issue</a> 或 <a href="https://github.com/your-username/plugin-marketplace/pulls">Pull Request</a>
+  如有问题或建议，欢迎提交 <a href="https://github.com/Qixuan112/cjsd1/issues">Issue</a> 或 <a href="https://github.com/Qixuan112/cjsd1/pulls">Pull Request</a>
 </p>
 
 <p align="center">

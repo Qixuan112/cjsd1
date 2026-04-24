@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GitHub 登录回调 - 插件市场</title>
+  <title data-i18n-title="callback.title">GitHub 登录回调 - 插件市场</title>
   <link rel="stylesheet" href="styles.css">
   <style>
     .callback-container {
@@ -62,8 +62,8 @@
     <div class="callback-box">
       <div id="loading-state">
         <div class="loading-spinner"></div>
-        <div class="callback-title">正在登录...</div>
-        <div class="callback-message">正在处理 GitHub 授权</div>
+        <div class="callback-title" data-i18n="callback.loading.title">正在登录...</div>
+        <div class="callback-message" data-i18n="callback.loading.processing">正在处理 GitHub 授权</div>
       </div>
       
       <div id="error-state" style="display: none;">
@@ -72,13 +72,14 @@
           <line x1="12" y1="8" x2="12" y2="12"></line>
           <line x1="12" y1="16" x2="12.01" y2="16"></line>
         </svg>
-        <div class="callback-title">登录失败</div>
-        <div class="callback-message" id="error-message">授权过程中发生错误</div>
-        <button class="btn btn-primary" onclick="window.location.href='/login.html'">返回登录页</button>
+        <div class="callback-title" data-i18n="callback.error.title">登录失败</div>
+        <div class="callback-message" id="error-message" data-i18n="callback.error.defaultMessage">授权过程中发生错误</div>
+        <button class="btn btn-primary" onclick="window.location.href='/login.html'" data-i18n="callback.error.backToLogin">返回登录页</button>
       </div>
     </div>
   </div>
 
+  <script src="i18n.js"></script>
   <script src="app.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
@@ -87,12 +88,12 @@
       const error = urlParams.get('error');
       
       if (error) {
-        showError('GitHub 授权被拒绝: ' + error);
+        showError(i18n.t('callback.error.githubDenied', { error }));
         return;
       }
       
       if (!code) {
-        showError('未收到授权码');
+        showError(i18n.t('callback.error.noAuthCode'));
         return;
       }
       
@@ -109,7 +110,7 @@
         const data = await response.json();
         
         if (!response.ok) {
-          throw new Error(data.error || '登录失败');
+          throw new Error(data.error || i18n.t('callback.error.loginFailed'));
         }
         
         // 存储认证信息
@@ -129,7 +130,7 @@
         
       } catch (error) {
         console.error('登录错误:', error);
-        showError(error.message || '登录过程中发生错误');
+        showError(error.message || i18n.t('callback.error.genericError'));
       }
     });
     

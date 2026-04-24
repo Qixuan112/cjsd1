@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>审批者管理 - 开源插件市场</title>
+  <title data-i18n-title="admin.reviewers.title">审批者管理 - 开源插件市场</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -11,9 +11,12 @@
     <!-- Header -->
     <header class="header">
       <div class="container">
-        <a href="/" class="logo">开源插件市场</a>
+        <a href="/" class="logo" data-i18n="site.name">开源插件市场</a>
         <nav class="nav-links">
-          <a href="store.html" class="nav-link">浏览商店</a>
+          <a href="store.html" class="nav-link" data-i18n="nav.store">浏览商店</a>
+          <button class="language-switcher" onclick="i18n.toggleLanguage()">
+            <span id="current-lang">EN</span>
+          </button>
           <div class="user-container"></div>
         </nav>
       </div>
@@ -24,14 +27,14 @@
       <!-- Sidebar -->
       <aside class="sidebar">
         <div class="sidebar-section">
-          <div class="sidebar-section-title">管理中心</div>
+          <div class="sidebar-section-title" data-i18n="admin.sidebar.management_center">管理中心</div>
           <ul class="sidebar-nav">
             <li class="sidebar-nav-item">
               <a href="admin.html" class="sidebar-nav-link">
                 <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
                 </svg>
-                仪表盘
+                <span data-i18n="admin.sidebar.dashboard">仪表盘</span>
               </a>
             </li>
             <li class="sidebar-nav-item">
@@ -39,7 +42,7 @@
                 <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                 </svg>
-                用户管理
+                <span data-i18n="admin.sidebar.user_management">用户管理</span>
               </a>
             </li>
             <li class="sidebar-nav-item">
@@ -47,7 +50,7 @@
                 <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                 </svg>
-                插件管理
+                <span data-i18n="admin.sidebar.plugin_management">插件管理</span>
               </a>
             </li>
             <li class="sidebar-nav-item">
@@ -55,7 +58,7 @@
                 <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
-                审批者管理
+                <span data-i18n="admin.sidebar.reviewer_management">审批者管理</span>
               </a>
             </li>
             <li class="sidebar-nav-item">
@@ -63,7 +66,7 @@
                 <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
                 </svg>
-                分类管理
+                <span data-i18n="admin.sidebar.category_management">分类管理</span>
               </a>
             </li>
             <li class="sidebar-nav-item">
@@ -71,7 +74,7 @@
                 <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                 </svg>
-                数据统计
+                <span data-i18n="admin.sidebar.statistics">数据统计</span>
               </a>
             </li>
           </ul>
@@ -82,15 +85,15 @@
       <main class="main-content">
         <!-- Page Header -->
         <div class="page-header">
-          <h1 class="page-title">审批者管理</h1>
-          <p class="page-description">管理插件审批人员</p>
+          <h1 class="page-title" data-i18n="admin.reviewers.page_title">审批者管理</h1>
+          <p class="page-description" data-i18n="admin.reviewers.page_description">管理插件审批人员</p>
         </div>
 
         <!-- Reviewer List -->
         <div class="card">
           <div class="card-header">
-            <h2 class="card-title">审批者列表</h2>
-            <button class="btn btn-primary" onclick="addReviewer()">添加审批者</button>
+            <h2 class="card-title" data-i18n="admin.reviewers.list_title">审批者列表</h2>
+            <button class="btn btn-primary" onclick="addReviewer()" data-i18n="admin.reviewers.add_reviewer">添加审批者</button>
           </div>
           <div class="card-body">
             <div id="reviewers-container">
@@ -105,14 +108,41 @@
     <footer class="footer">
       <div class="container">
         <div class="footer-content">
-          <p>开源插件市场 - 基于 GitHub OAuth 的元数据插件平台</p>
+          <div class="footer-grid">
+            <div class="footer-section">
+              <h3 class="footer-section-title" data-i18n="footer.acknowledgments">特别鸣谢</h3>
+              <a href="https://github.com/" target="_blank" class="footer-link">GitHub</a>
+              <a href="contributors.html" class="footer-link" data-i18n="footer.contributors">开源贡献者</a>
+              <a href="#" class="footer-link" data-i18n="footer.supporters">社区支持者</a>
+            </div>
+            <div class="footer-section">
+              <h3 class="footer-section-title" data-i18n="footer.terms">相关说明</h3>
+              <a href="#" class="footer-link" data-i18n="footer.terms_of_use">使用条款</a>
+              <a href="#" class="footer-link" data-i18n="footer.privacy_policy">隐私政策</a>
+              <a href="#" class="footer-link" data-i18n="footer.disclaimer">免责声明</a>
+            </div>
+            <div class="footer-section">
+              <h3 class="footer-section-title" data-i18n="footer.contact">联系我们</h3>
+              <a href="mailto:contact@example.com" class="footer-link" data-i18n="footer.email">电子邮箱</a>
+              <a href="#" class="footer-link" data-i18n="footer.feedback">问题反馈</a>
+              <a href="#" class="footer-link" data-i18n="footer.join_us">加入我们</a>
+            </div>
+          </div>
+          <div class="footer-bottom">
+            <p data-i18n="footer.copyright">开源插件市场 - 元数据插件平台</p>
+            <p style="margin-top: 0.5rem;" data-i18n="footer.notice">本站不托管插件文件，请直接访问 GitHub 仓库获取</p>
+          </div>
         </div>
       </div>
     </footer>
   </div>
 
+  <script src="i18n.js"></script>
   <script src="app.js"></script>
   <script>
+    // 更新语言切换按钮状态
+    document.getElementById('current-lang').textContent = i18n.getCurrentLanguage().toUpperCase();
+
     // 检查登录状态和管理员权限
     (async function checkAuth() {
       if (!auth.isAuthenticated()) {
@@ -123,7 +153,7 @@
       // 检查是否是管理员或审批者（admin 继承 reviewer 权限）
       const user = auth.getUser();
       if (!user || (user.role !== 'admin' && user.role !== 'reviewer')) {
-        alert('您没有权限访问此页面');
+        alert(i18n.t('admin.no_permission') || '您没有权限访问此页面');
         window.location.href = '/';
         return;
       }
@@ -137,7 +167,7 @@
       const container = document.getElementById('reviewers-container');
       
       try {
-        utils.showLoading(container, '加载中...');
+        utils.showLoading(container, i18n.t('common.loading') || '加载中...');
         
         // 从用户列表中筛选出审批者
         const data = await api.get('/admin/users');
@@ -150,8 +180,8 @@
               <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
-              <h3 class="empty-title">暂无审批者</h3>
-              <p class="empty-description">还没有设置审批人员</p>
+              <h3 class="empty-title">${i18n.t('admin.reviewers.empty_title') || '暂无审批者'}</h3>
+              <p class="empty-description">${i18n.t('admin.reviewers.empty_description') || '还没有设置审批人员'}</p>
             </div>
           `;
           return;
@@ -163,10 +193,10 @@
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>用户名</th>
-                  <th>邮箱</th>
-                  <th>注册时间</th>
-                  <th>操作</th>
+                  <th data-i18n="admin.users.username">用户名</th>
+                  <th data-i18n="admin.users.email">邮箱</th>
+                  <th data-i18n="admin.users.register_time">注册时间</th>
+                  <th data-i18n="common.actions">操作</th>
                 </tr>
               </thead>
               <tbody>
@@ -182,7 +212,7 @@
                     <td>${reviewer.email || '-'}</td>
                     <td>${utils.formatDate(reviewer.createdAt)}</td>
                     <td>
-                      <button class="btn btn-ghost btn-sm" onclick="removeReviewer(${reviewer.id})">移除</button>
+                      <button class="btn btn-ghost btn-sm" onclick="removeReviewer(${reviewer.id})">${i18n.t('admin.reviewers.remove') || '移除'}</button>
                     </td>
                   </tr>
                 `).join('')}
@@ -191,7 +221,7 @@
           </div>
         `;
       } catch (error) {
-        utils.showError(container, '加载失败，请重试', 'loadReviewers()');
+        utils.showError(container, i18n.t('common.load_failed') || '加载失败，请重试', 'loadReviewers()');
       }
     }
 
@@ -204,7 +234,7 @@
         const eligibleUsers = users.filter(u => u.role === 'user');
 
         if (eligibleUsers.length === 0) {
-          alert('没有可添加的用户（所有用户已是审批者或管理员）');
+          alert(i18n.t('admin.reviewers.no_eligible_users') || '没有可添加的用户（所有用户已是审批者或管理员）');
           return;
         }
 
@@ -215,18 +245,18 @@
         modal.innerHTML = `
           <div class="modal-content" style="max-width: 500px;">
             <div class="modal-header">
-              <h3 class="modal-title">添加审批者</h3>
+              <h3 class="modal-title">${i18n.t('admin.reviewers.add_title') || '添加审批者'}</h3>
               <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body">
-              <p style="margin-bottom: 1rem; color: var(--text-secondary);">选择要设为审批者的用户：</p>
+              <p style="margin-bottom: 1rem; color: var(--text-secondary);">${i18n.t('admin.reviewers.select_user') || '选择要设为审批者的用户：'}</p>
               <div class="user-select-list" style="max-height: 300px; overflow-y: auto;">
                 ${eligibleUsers.map(user => `
                   <div class="user-select-item" style="display: flex; align-items: center; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.5rem; margin-bottom: 0.5rem; cursor: pointer; transition: all 0.2s;" onclick="selectUserForReviewer(${user.id}, '${user.username}', this)">
                     <img src="${user.avatar || 'https://avatars.githubusercontent.com/u/0?v=4'}" alt="${user.username}" style="width: 32px; height: 32px; border-radius: 50%; margin-right: 0.75rem;">
                     <div style="flex: 1;">
                       <div style="font-weight: 500;">${user.username}</div>
-                      <div style="font-size: 0.75rem; color: var(--text-secondary);">${user.email || '无邮箱'}</div>
+                      <div style="font-size: 0.75rem; color: var(--text-secondary);">${user.email || (i18n.t('admin.reviewers.no_email') || '无邮箱')}</div>
                     </div>
                     <input type="radio" name="selected-user" value="${user.id}" style="margin-left: 0.5rem;">
                   </div>
@@ -234,8 +264,8 @@
               </div>
             </div>
             <div class="modal-footer">
-              <button class="btn btn-ghost" onclick="closeModal()">取消</button>
-              <button class="btn btn-primary" onclick="confirmAddReviewer()" id="confirm-add-btn" disabled>确认添加</button>
+              <button class="btn btn-ghost" onclick="closeModal()">${i18n.t('common.cancel') || '取消'}</button>
+              <button class="btn btn-primary" onclick="confirmAddReviewer()" id="confirm-add-btn" disabled>${i18n.t('admin.reviewers.confirm_add') || '确认添加'}</button>
             </div>
           </div>
         `;
@@ -249,7 +279,7 @@
         `;
         modal.appendChild(style);
       } catch (error) {
-        alert('加载用户列表失败：' + error.message);
+        alert((i18n.t('admin.reviewers.load_failed') || '加载用户列表失败：') + error.message);
       }
     }
 
@@ -275,32 +305,32 @@
     // 确认添加审批者
     async function confirmAddReviewer() {
       if (!selectedUserId) {
-        alert('请先选择一个用户');
+        alert(i18n.t('admin.reviewers.select_first') || '请先选择一个用户');
         return;
       }
 
       try {
         await api.put(`/admin/users/${selectedUserId}/role`, { role: 'reviewer' });
         closeModal();
-        alert('审批者添加成功！');
+        alert(i18n.t('admin.reviewers.add_success') || '审批者添加成功！');
         loadReviewers(); // 刷新列表
       } catch (error) {
-        alert('添加失败：' + error.message);
+        alert((i18n.t('admin.reviewers.add_failed') || '添加失败：') + error.message);
       }
     }
 
     // 移除审批者
     async function removeReviewer(userId) {
-      if (!confirm('确定要将此用户从审批者列表中移除吗？\n移除后该用户将恢复为普通用户角色。')) {
+      if (!confirm(i18n.t('admin.reviewers.remove_confirm') || '确定要将此用户从审批者列表中移除吗？\\n移除后该用户将恢复为普通用户角色。')) {
         return;
       }
 
       try {
         await api.put(`/admin/users/${userId}/role`, { role: 'user' });
-        alert('审批者已移除！');
+        alert(i18n.t('admin.reviewers.remove_success') || '审批者已移除！');
         loadReviewers(); // 刷新列表
       } catch (error) {
-        alert('移除失败：' + error.message);
+        alert((i18n.t('admin.reviewers.remove_failed') || '移除失败：') + error.message);
       }
     }
 

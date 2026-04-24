@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>我的插件 - 开源插件市场</title>
+  <title data-i18n-title="myPlugins.title">我的插件</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -11,10 +11,13 @@
     <!-- Header -->
     <header class="header">
       <div class="container">
-        <a href="/" class="logo">开源插件市场</a>
+        <a href="/" class="logo" data-i18n="site.name">KiraAI 插件商店</a>
         <nav class="nav-links">
-          <a href="store.html" class="nav-link">浏览商店</a>
+          <a href="store.html" class="nav-link" data-i18n="nav.browse">浏览商店</a>
           <div class="user-container"></div>
+          <button class="lang-switch" onclick="i18n.toggleLanguage()" title="Switch Language">
+            <span class="lang-current">中/EN</span>
+          </button>
         </nav>
       </div>
     </header>
@@ -24,14 +27,14 @@
       <!-- Sidebar -->
       <aside class="sidebar">
         <div class="sidebar-section">
-          <div class="sidebar-section-title">开发者中心</div>
+          <div class="sidebar-section-title" data-i18n="sidebar.devCenter">开发者中心</div>
           <ul class="sidebar-nav">
             <li class="sidebar-nav-item">
               <a href="developer.html" class="sidebar-nav-link">
                 <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
                 </svg>
-                仪表盘
+                <span data-i18n="sidebar.dashboard">仪表盘</span>
               </a>
             </li>
             <li class="sidebar-nav-item">
@@ -39,7 +42,7 @@
                 <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                 </svg>
-                我的插件
+                <span data-i18n="sidebar.myPlugins">我的插件</span>
               </a>
             </li>
             <li class="sidebar-nav-item">
@@ -47,7 +50,7 @@
                 <svg class="sidebar-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
-                提交插件
+                <span data-i18n="sidebar.submit">提交插件</span>
               </a>
             </li>
           </ul>
@@ -58,8 +61,11 @@
       <main class="main-content">
         <!-- Page Header -->
         <div class="page-header">
-          <h1 class="page-title">我的插件</h1>
-          <p class="page-description">管理您提交的所有插件</p>
+          <div>
+            <h1 class="page-title" data-i18n="myPlugins.title">我的插件</h1>
+            <p class="page-description" data-i18n="myPlugins.subtitle">管理您提交的所有插件</p>
+          </div>
+          <a href="submit-plugin.html" class="btn btn-primary" data-i18n="myPlugins.new">提交新插件</a>
         </div>
 
         <!-- Plugin List -->
@@ -77,12 +83,28 @@
     <footer class="footer">
       <div class="container">
         <div class="footer-content">
-          <p>开源插件市场 - 基于 GitHub OAuth 的元数据插件平台</p>
+          <div class="footer-grid">
+            <div class="footer-section">
+              <h3 class="footer-section-title" data-i18n="footer.thanks">特别鸣谢</h3>
+              <a href="https://github.com/" target="_blank" class="footer-link" data-i18n="footer.github">GitHub</a>
+              <a href="contributors.html" class="footer-link" data-i18n="footer.contributors">开源贡献者</a>
+              <a href="#" class="footer-link" data-i18n="footer.community">社区支持者</a>
+            </div>
+            <div class="footer-section">
+              <h3 class="footer-section-title" data-i18n="footer.docs">相关说明</h3>
+              <a href="terms.html" class="footer-link" data-i18n="footer.terms">服务条款</a>
+              <a href="privacy.html" class="footer-link" data-i18n="footer.privacy">隐私政策</a>
+              </div>
+          </div>
+          <div class="footer-bottom">
+            <p data-i18n="site.name">KiraAI 插件商店 - 元数据插件平台</p>
+          </div>
         </div>
       </div>
     </footer>
   </div>
 
+  <script src="i18n.js"></script>
   <script src="app.js"></script>
   <script>
     // 检查登录状态
@@ -90,12 +112,15 @@
       window.location.href = '/login.html?returnUrl=' + encodeURIComponent(window.location.pathname);
     }
 
+    // 获取翻译函数
+    const t = window.i18n ? window.i18n.t.bind(window.i18n) : (k) => k;
+
     // 加载插件列表
     async function loadPlugins() {
       const container = document.getElementById('plugins-container');
       
       try {
-        utils.showLoading(container, '加载中...');
+        utils.showLoading(container, t('msg.loading'));
         
         const data = await api.get('/developer/plugins');
         const plugins = data.items || [];
@@ -106,11 +131,15 @@
               <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
               </svg>
-              <h3 class="empty-title">暂无插件</h3>
-              <p class="empty-description">您还没有提交任何插件</p>
-              <a href="submit-plugin.html" class="btn btn-primary">提交新插件</a>
+              <h3 class="empty-title" data-i18n="msg.empty">暂无数据</h3>
+              <p class="empty-description" data-i18n="myPlugins.empty">您还没有提交任何插件</p>
+              <a href="submit-plugin.html" class="btn btn-primary" data-i18n="myPlugins.emptyAction">立即提交第一个插件</a>
             </div>
           `;
+          // 应用翻译到动态生成的内容
+          if (window.i18n) {
+            window.i18n.applyLanguage();
+          }
           return;
         }
 
@@ -124,9 +153,9 @@
                     <h3 style="margin: 0; font-size: 1.125rem;">${plugin.name}</h3>
                     <span class="badge badge-${getStatusClass(plugin.status)}">${getStatusLabel(plugin.status)}</span>
                   </div>
-                  <p style="margin: 0 0 0.5rem 0; color: var(--text-secondary); font-size: 0.875rem;">${plugin.description || '暂无描述'}</p>
+                  <p style="margin: 0 0 0.5rem 0; color: var(--text-secondary); font-size: 0.875rem;">${plugin.description || t('msg.empty')}</p>
                   <div style="display: flex; align-items: center; gap: 1rem; font-size: 0.75rem; color: var(--text-secondary);">
-                    <span>版本: v${plugin.version || 'unknown'}</span>
+                    <span>${t('plugin.version')}: v${plugin.version || 'unknown'}</span>
                     <span style="display: flex; align-items: center; gap: 0.25rem;">
                       <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
@@ -139,21 +168,26 @@
                       </svg>
                       ${plugin.github_data?.forks_count || plugin.github_data?.forks || 0}
                     </span>
-                    <span>提交于 ${utils.formatDate(plugin.created_at)}</span>
+                    <span>${t('myPlugins.submittedAt')} ${utils.formatDate(plugin.created_at)}</span>
                   </div>
                 </div>
                 <div style="display: flex; gap: 0.5rem;">
-                  <a href="${plugin.repo_url}" target="_blank" class="btn btn-ghost btn-sm">查看仓库</a>
+                  <a href="${plugin.repo_url}" target="_blank" class="btn btn-ghost btn-sm" data-i18n="action.viewRepo">${t('action.viewRepo')}</a>
                   ${plugin.status === 'pending' || plugin.status === 'approved' ? `
-                    <button class="btn btn-error btn-sm" onclick="withdrawPlugin(${plugin.id}, '${plugin.name}')">撤回</button>
+                    <button class="btn btn-error btn-sm" onclick="withdrawPlugin(${plugin.id}, '${plugin.name}')" data-i18n="action.withdraw">${t('action.withdraw')}</button>
                   ` : ''}
                 </div>
               </div>
             `).join('')}
           </div>
         `;
+
+        // 应用翻译到动态生成的内容
+        if (window.i18n) {
+          window.i18n.applyLanguage();
+        }
       } catch (error) {
-        utils.showError(container, '加载失败，请重试', 'loadPlugins()');
+        utils.showError(container, t('msg.error.load'), 'loadPlugins()');
       }
     }
 
@@ -169,29 +203,29 @@
 
     function getStatusLabel(status) {
       const labels = {
-        'pending': '待审核',
-        'approved': '已通过',
-        'rejected': '已驳回',
-        'removed': '已下架'
+        'pending': t('status.pending'),
+        'approved': t('status.approved'),
+        'rejected': t('status.rejected'),
+        'removed': t('status.removed')
       };
       return labels[status] || status;
     }
 
     // 撤回插件
     async function withdrawPlugin(pluginId, pluginName) {
-      if (!confirm(`确定要撤回插件 "${pluginName}" 吗？\n撤回后插件将从审核队列中移除。`)) {
+      if (!confirm(t('myPlugins.withdrawConfirm').replace('{name}', pluginName))) {
         return;
       }
 
       try {
         await api.post(`/developer/plugins/${pluginId}/withdraw`, {});
-        alert('插件已撤回！');
+        alert(t('myPlugins.withdrawSuccess'));
         loadPlugins(); // 刷新列表
       } catch (error) {
         if (error.message && error.message.includes('400')) {
-          alert('该插件无法撤回，可能已被审核或不存在');
+          alert(t('myPlugins.withdrawError400'));
         } else {
-          alert('撤回失败：' + error.message);
+          alert(t('msg.error.action') + error.message);
         }
       }
     }

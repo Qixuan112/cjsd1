@@ -229,11 +229,13 @@ const utils = {
     const now = new Date();
     const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
     
-    if (diffDays === 0) return '今天';
-    if (diffDays === 1) return '昨天';
-    if (diffDays < 7) return `${diffDays} 天前`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} 周前`;
-    return `${Math.floor(diffDays / 30)} 月前`;
+    const t = window.i18n ? window.i18n.t.bind(window.i18n) : (k) => k;
+    
+    if (diffDays === 0) return t('date.today');
+    if (diffDays === 1) return t('date.yesterday');
+    if (diffDays < 7) return t('date.daysAgo').replace('{n}', diffDays);
+    if (diffDays < 30) return t('date.weeksAgo').replace('{n}', Math.floor(diffDays / 7));
+    return t('date.monthsAgo').replace('{n}', Math.floor(diffDays / 30));
   },
   
   /**
@@ -248,23 +250,27 @@ const utils = {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
     
-    if (diffMins < 1) return '刚刚';
-    if (diffMins < 60) return `${diffMins} 分钟前`;
-    if (diffHours < 24) return `${diffHours} 小时前`;
-    if (diffDays < 30) return `${diffDays} 天前`;
-    return date.toLocaleDateString('zh-CN');
+    const t = window.i18n ? window.i18n.t.bind(window.i18n) : (k) => k;
+    const lang = window.i18n ? window.i18n.getCurrentLanguage() : 'zh-CN';
+    
+    if (diffMins < 1) return t('time.justNow');
+    if (diffMins < 60) return t('time.minutesAgo').replace('{n}', diffMins);
+    if (diffHours < 24) return t('time.hoursAgo').replace('{n}', diffHours);
+    if (diffDays < 30) return t('time.daysAgo').replace('{n}', diffDays);
+    return date.toLocaleDateString(lang === 'zh-CN' ? 'zh-CN' : 'en-US');
   },
   
   /**
    * 获取状态标签样式
    */
   getStatusBadge(status) {
+    const t = window.i18n ? window.i18n.t.bind(window.i18n) : (k) => k;
     const statusMap = {
-      'pending': { text: '待审核', class: 'badge-warning' },
-      'approved': { text: '已通过', class: 'badge-success' },
-      'rejected': { text: '已驳回', class: 'badge-error' },
-      'removed': { text: '已下架', class: 'badge-default' },
-      'draft': { text: '草稿', class: 'badge-default' }
+      'pending': { text: t('status.pending'), class: 'badge-warning' },
+      'approved': { text: t('status.approved'), class: 'badge-success' },
+      'rejected': { text: t('status.rejected'), class: 'badge-error' },
+      'removed': { text: t('status.removed'), class: 'badge-default' },
+      'draft': { text: t('status.draft'), class: 'badge-default' }
     };
     return statusMap[status] || { text: status, class: 'badge-default' };
   },
@@ -273,12 +279,13 @@ const utils = {
    * 获取分类名称
    */
   getCategoryName(slug) {
+    const t = window.i18n ? window.i18n.t.bind(window.i18n) : (k) => k;
     const names = {
-      'productivity': '生产力',
-      'developer-tools': '开发工具',
-      'design': '设计',
-      'communication': '通讯',
-      'utilities': '实用工具'
+      'productivity': t('store.category.productivity'),
+      'developer-tools': t('store.category.developerTools'),
+      'design': t('store.category.design'),
+      'communication': t('store.category.communication'),
+      'utilities': t('store.category.utilities')
     };
     return names[slug] || slug;
   },
@@ -301,11 +308,13 @@ const utils = {
   /**
    * 显示加载状态
    */
-  showLoading(container, text = '加载中...') {
+  showLoading(container, text = null) {
+    const t = window.i18n ? window.i18n.t.bind(window.i18n) : (k) => k;
+    const loadingText = text || t('msg.loading');
     container.innerHTML = `
       <div class="loading-container">
         <div class="loading-spinner"></div>
-        <p class="loading-text">${text}</p>
+        <p class="loading-text">${loadingText}</p>
       </div>
     `;
   },
@@ -314,6 +323,7 @@ const utils = {
    * 显示错误状态
    */
   showError(container, message, onRetry) {
+    const t = window.i18n ? window.i18n.t.bind(window.i18n) : (k) => k;
     container.classList.remove('plugin-grid');
     container.classList.add('error-container');
     container.innerHTML = `
@@ -321,9 +331,9 @@ const utils = {
         <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
         </svg>
-        <h3 class="empty-title">出错了</h3>
+        <h3 class="empty-title">${t('msg.error')}</h3>
         <p class="empty-description">${message}</p>
-        ${onRetry ? `<button class="btn btn-primary" onclick="${onRetry}">重试</button>` : ''}
+        ${onRetry ? `<button class="btn btn-primary" onclick="${onRetry}">${t('btn.retry')}</button>` : ''}
       </div>
     `;
   },
@@ -332,15 +342,85 @@ const utils = {
    * 显示空状态
    */
   showEmpty(container, message) {
+    const t = window.i18n ? window.i18n.t.bind(window.i18n) : (k) => k;
     container.innerHTML = `
       <div class="empty-state">
         <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
         </svg>
-        <h3 class="empty-title">暂无数据</h3>
+        <h3 class="empty-title">${t('msg.empty')}</h3>
         <p class="empty-description">${message}</p>
       </div>
     `;
+  },
+
+  /**
+   * 获取头像 URL（使用代理缓存）
+   * @param {string} originalUrl - 原始头像 URL
+   * @param {string} fallbackName - 备用名称（用于生成默认头像）
+   * @returns {string} 头像 URL
+   */
+  getAvatarUrl(originalUrl, fallbackName = '?') {
+    if (!originalUrl) {
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(fallbackName)}&background=e5e7eb&color=6b7280&size=64`;
+    }
+    // 使用代理接口
+    return `${API_BASE_URL}/avatar/proxy?url=${encodeURIComponent(originalUrl)}`;
+  },
+
+  /**
+   * 批量获取头像 URL（使用代理缓存）
+   * @param {string[]} urls - 原始头像 URL 数组
+   * @returns {Promise<Object>} 缓存后的头像 URL 映射
+   */
+  async getAvatarUrlsBatch(urls) {
+    const uniqueUrls = [...new Set(urls.filter(url => url))];
+    if (uniqueUrls.length === 0) return {};
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/avatar/proxy/batch`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ urls: uniqueUrls })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.results || {};
+      }
+    } catch (error) {
+      console.error('Avatar batch fetch failed:', error);
+    }
+
+    // 失败时返回原始 URL
+    const result = {};
+    uniqueUrls.forEach(url => {
+      result[url] = { url: url, cached: false };
+    });
+    return result;
+  },
+
+  /**
+   * 创建带有缓存的头像图片元素 HTML
+   * @param {string} src - 原始头像 URL
+   * @param {string} alt - 图片 alt 文本
+   * @param {string} className - CSS 类名
+   * @param {Object} options - 其他选项
+   * @returns {string} img 标签 HTML
+   */
+  createAvatarHtml(src, alt = '', className = '', options = {}) {
+    const { width = 64, height = 64, fallbackName = alt || '?' } = options;
+    const fallbackUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(fallbackName)}&background=e5e7eb&color=6b7280&size=${Math.max(width, height)}`;
+    
+    if (!src) {
+      return `<img src="${fallbackUrl}" alt="${alt}" class="${className}" width="${width}" height="${height}">`;
+    }
+
+    // 使用代理 URL
+    const proxyUrl = `${API_BASE_URL}/avatar/proxy?url=${encodeURIComponent(src)}`;
+    
+    return `<img src="${proxyUrl}" alt="${alt}" class="${className}" width="${width}" height="${height}" 
+            onerror="this.onerror=null;this.src='${fallbackUrl}'">`;
   }
 };
 
@@ -348,6 +428,11 @@ const utils = {
  * 页面初始化
  */
 document.addEventListener('DOMContentLoaded', () => {
+  // 初始化国际化（如果 i18n.js 已加载）
+  if (window.i18n) {
+    window.i18n.init();
+  }
+  
   // 更新用户界面
   updateUserUI();
 });
@@ -394,3 +479,99 @@ function updateUserUI() {
 window.api = api;
 window.auth = auth;
 window.utils = utils;
+
+/**
+ * 主题管理
+ */
+const theme = {
+  STORAGE_KEY: 'plugin_marketplace_theme',
+  
+  /**
+   * 获取当前主题
+   */
+  getCurrentTheme() {
+    return localStorage.getItem(this.STORAGE_KEY) || 'light';
+  },
+  
+  /**
+   * 设置主题
+   */
+  setTheme(themeName) {
+    if (themeName === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    localStorage.setItem(this.STORAGE_KEY, themeName);
+    this.updateToggleButton();
+  },
+  
+  /**
+   * 切换主题
+   */
+  toggle() {
+    const currentTheme = this.getCurrentTheme();
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    this.setTheme(newTheme);
+  },
+  
+  /**
+   * 初始化主题
+   */
+  init() {
+    const savedTheme = this.getCurrentTheme();
+    this.setTheme(savedTheme);
+    this.createToggleButton();
+  },
+  
+  /**
+   * 创建主题切换按钮
+   */
+  createToggleButton() {
+    // 检查是否已存在
+    if (document.querySelector('.theme-toggle')) return;
+    
+    const button = document.createElement('button');
+    button.className = 'theme-toggle';
+    button.setAttribute('aria-label', '切换主题');
+    button.innerHTML = this.getIconSvg();
+    button.addEventListener('click', () => this.toggle());
+    document.body.appendChild(button);
+  },
+  
+  /**
+   * 更新切换按钮图标
+   */
+  updateToggleButton() {
+    const button = document.querySelector('.theme-toggle');
+    if (button) {
+      button.innerHTML = this.getIconSvg();
+    }
+  },
+  
+  /**
+   * 获取图标 SVG
+   */
+  getIconSvg() {
+    const currentTheme = this.getCurrentTheme();
+    if (currentTheme === 'dark') {
+      // 月亮图标（当前是暗色模式，点击切换到亮色）
+      return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+      </svg>`;
+    } else {
+      // 太阳图标（当前是亮色模式，点击切换到暗色）
+      return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+      </svg>`;
+    }
+  }
+};
+
+// 初始化主题
+document.addEventListener('DOMContentLoaded', () => {
+  theme.init();
+});
+
+// 导出主题管理器
+window.theme = theme;

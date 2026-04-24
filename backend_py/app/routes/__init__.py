@@ -11,6 +11,7 @@ from app.routes import categories
 from app.routes import developer
 from app.routes import reviewer
 from app.routes import admin
+from app.routes import avatar
 
 __all__ = [
     'auth',
@@ -20,4 +21,5 @@ __all__ = [
     'developer',
     'reviewer',
     'admin',
+    'avatar',
 ]

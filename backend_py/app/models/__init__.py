@@ -9,6 +9,7 @@ from .category import Category
 from .plugin import Plugin
 from .review import Review
 from .audit_log import AuditLog
+from .avatar_cache import AvatarCache
 
 __all__ = [
     'User',
@@ -17,4 +18,5 @@ __all__ = [
     'Plugin',
     'Review',
     'AuditLog',
+    'AvatarCache',
 ]
